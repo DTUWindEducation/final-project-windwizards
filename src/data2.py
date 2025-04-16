@@ -1,6 +1,26 @@
 import math
 import numpy as np
 
+class Blade:
+    def __init__(self, BladeGeometry, OperationalConditions):
+        """
+        Initialize the Blade class with blade geometry and operational conditions.
+        
+        Parameters:
+        BladeGeometry (array of BladeGeometry): An array of BladeGeometry class containing blade properties.
+        OperationalConditions (OperationalConditions): An instance of the OperationalConditions class containing operational parameters.
+        """
+        self.blade_geometries = BladeGeometry
+        self.operational_conditions = OperationalConditions
+
+
+    def compute_local_angle_of_attack(self, initial_a=0):
+        blade in self.blade_geometries:
+        V = self.operational_conditions.wind_speed
+        return phi - twist - pitch_angle
+
+
+
 class BladeGeometry:
     def __init__(self, radius, hub_radius, r_sections, chord, twist, airfoil_data):
         self.radius = radius
