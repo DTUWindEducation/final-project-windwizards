@@ -1,17 +1,15 @@
-from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List, Dict
 from .Airfoil import Airfoil
 from .BladeElement import BladeElement
 
-@dataclass
 class Blade:
-    elements: List[BladeElement] = field(default_factory=list)
+    def __init__(self, elements: List[BladeElement] = None):
+        self.elements = elements if elements else []
 
-    @classmethod
-    def from_file(cls, file_path: Path, airfoil_map: Dict[int, Airfoil] = None) -> "Blade":
+    def load_from_file(self, file_path: Path, airfoil_map: Dict[int, Airfoil] = None):
         lines = file_path.read_text(encoding='utf-8').splitlines()
-        elements = []
+        self.elements = []
 
         for line in lines:
             line = line.strip()
@@ -32,10 +30,7 @@ class Blade:
 
             airfoil = airfoil_map.get(airfoil_id) if airfoil_map else None
             element = BladeElement(r=r, twist=twist, chord=chord, airfoil_id=airfoil_id, airfoil=airfoil)
-            elements.append(element)
-
-        return cls(elements=elements)
+            self.elements.append(element)
 
     def __repr__(self):
         return f"Blade with {len(self.elements)} elements"
-
