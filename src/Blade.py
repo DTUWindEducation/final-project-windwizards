@@ -1,8 +1,8 @@
 from pathlib import Path
 from typing import List, Dict, Optional
 import numpy as np
-from .Airfoil import Airfoil
-from .BladeElement import BladeElement
+from src.Airfoil import Airfoil
+from src.BladeElement import BladeElement
 
 class Blade:
     def __init__(self, elements: List[BladeElement] = None, num_blades: int = 3, operational_conditions: Optional[Dict] = None):
@@ -12,13 +12,27 @@ class Blade:
         Parameters:
         - elements (List[BladeElement]): List of blade elements.
         - num_blades (int): Number of blades.
-        - operational_conditions (Optional[Dict]): Dictionary containing operational conditions (e.g., wind speed, RPM).
+        - operational_conditions (Optional[Dict]): Dictionary containing operational conditions.
         """
         self.elements = elements if elements else []
-        self.operational_conditions = operational_conditions if operational_conditions else {}
+        self.R = max(element.r for element in self.elements) if self.elements else 0  # Tip radius
+        self.calculate_element_discretization_lengths()  # Calculate dr for each element
         self.num_blades = num_blades
-        self.omega = self.operational_conditions.get('rpm', 0) * 2 * np.pi / 60  # Convert RPM to rad/s
-        self.V = self.operational_conditions.get('wind_speed', 0)  # Wind speed [m/s]
+        self.operational_conditions = operational_conditions if operational_conditions else {}
+        self.total_torque = 0.0  # Total torque on the blade
+        self.total_thrust = 0.0  # Total thrust on the blade
+        self.total_power = 0.0    # Total power on the blade
+        
+        # Calculate derived parameters if operational conditions are provided
+        if self.operational_conditions:
+            self.wind_speed = self.operational_conditions.wind_speed
+            self.omega = self.operational_conditions.rpm * 2 * np.pi / 60  # Convert RPM to rad/s
+            self.tsr = self.calculate_tip_speed_ratio()
+        else:
+            self.wind_speed = 0
+            self.omega = 0
+            self.R = 0
+            self.tsr = 0
 
     def load_from_file(self, file_path: Path, airfoil_map: Dict[int, Airfoil] = None):
         """
@@ -52,21 +66,25 @@ class Blade:
             element = BladeElement(r=r, twist=twist, chord=chord, airfoil_id=airfoil_id, airfoil=airfoil)
             self.elements.append(element)
 
-    def calculate_tip_speed_ratio(self, u_wind: float, omega: float):
-        """
-        Calculate the tip speed ratio (TSR) for the blade.
-
-        Parameters:
-        - u_wind (float): Wind speed [m/s].
-        - omega (float): Rotational speed [rad/s].
-
-        Returns:
-        - TSR (float): Tip speed ratio.
-        """
-        if u_wind == 0:
+    def calculate_tip_speed_ratio(self) -> float:
+        """Calculate the tip speed ratio."""
+        if self.wind_speed == 0:
             return 0
-        r_tip = max(element.r for element in self.elements)  # Get the tip radius
-        return (r_tip * omega) / u_wind
+        return (self.R * self.omega) / self.wind_speed
+
+    def calculate_element_discretization_lengths(self):
+        """Calculate and assign the discretization length (dr) for each blade element."""
+        if not self.elements:
+            return
+
+        for i, element in enumerate(self.elements):
+            if i == 0:  # First element
+                dr = (self.elements[i + 1].r - element.r) / 2
+            elif i == len(self.elements) - 1:  # Last element
+                dr = (element.r - self.elements[i - 1].r) / 2
+            else:  # Middle elements
+                dr = (self.elements[i + 1].r - self.elements[i - 1].r) / 2
+            element.dr = dr
 
     def __repr__(self):
         return f"Blade with {len(self.elements)} elements, {self.num_blades} blades, and operational conditions: {self.operational_conditions}"

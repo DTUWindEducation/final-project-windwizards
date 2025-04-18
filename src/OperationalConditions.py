@@ -2,12 +2,13 @@ from typing import List
 from pathlib import Path
 
 class OperationalCondition:
-    def __init__(self, wind_speed: float, pitch: float, rpm: float, aero_power: float, aero_thrust: float):
+    def __init__(self, wind_speed: float, pitch: float, rpm: float, aero_power: float, aero_thrust: float, rho: float = 1.225):
         self.wind_speed = wind_speed
         self.pitch = pitch
         self.rpm = rpm
         self.aero_power = aero_power
         self.aero_thrust = aero_thrust
+        self.rho = rho
 
     def __repr__(self):
         return (f"OperationalCondition(wind_speed={self.wind_speed}, pitch={self.pitch}, "
