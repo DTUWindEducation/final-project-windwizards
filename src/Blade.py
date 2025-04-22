@@ -5,7 +5,7 @@ from src.Airfoil import Airfoil
 from src.BladeElement import BladeElement
 
 class Blade:
-    def __init__(self, elements: List[BladeElement] = None, num_blades: int = 3, operational_conditions: Optional[Dict] = None):
+    def __init__(self, elements: List[BladeElement] = None):
         """
         Initialize the Blade class.
 
@@ -17,22 +17,6 @@ class Blade:
         self.elements = elements if elements else []
         self.R = max(element.r for element in self.elements) if self.elements else 0  # Tip radius
         self.calculate_element_discretization_lengths()  # Calculate dr for each element
-        self.num_blades = num_blades
-        self.operational_conditions = operational_conditions if operational_conditions else {}
-        self.total_torque = 0.0  # Total torque on the blade
-        self.total_thrust = 0.0  # Total thrust on the blade
-        self.total_power = 0.0    # Total power on the blade
-        
-        # Calculate derived parameters if operational conditions are provided
-        if self.operational_conditions:
-            self.wind_speed = self.operational_conditions.wind_speed
-            self.omega = self.operational_conditions.rpm * 2 * np.pi / 60  # Convert RPM to rad/s
-            self.tsr = self.calculate_tip_speed_ratio()
-        else:
-            self.wind_speed = 0
-            self.omega = 0
-            self.R = 0
-            self.tsr = 0
 
     def load_from_file(self, file_path: Path, airfoil_map: Dict[int, Airfoil] = None):
         """
@@ -65,12 +49,6 @@ class Blade:
             airfoil = airfoil_map.get(airfoil_id) if airfoil_map else None
             element = BladeElement(r=r, twist=twist, chord=chord, airfoil_id=airfoil_id, airfoil=airfoil)
             self.elements.append(element)
-
-    def calculate_tip_speed_ratio(self) -> float:
-        """Calculate the tip speed ratio."""
-        if self.wind_speed == 0:
-            return 0
-        return (self.R * self.omega) / self.wind_speed
 
     def calculate_element_discretization_lengths(self):
         """Calculate and assign the discretization length (dr) for each blade element."""
