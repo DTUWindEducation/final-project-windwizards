@@ -1,7 +1,8 @@
 from typing import List
 from pathlib import Path
+import numpy as np
 
-class OperationalCondition:
+class OperationalCharacteristic:
     def __init__(self, wind_speed: float, pitch: float, rpm: float, aero_power: float, aero_thrust: float, rho: float = 1.225):
         self.wind_speed = wind_speed
         self.pitch = pitch
@@ -9,14 +10,15 @@ class OperationalCondition:
         self.aero_power = aero_power
         self.aero_thrust = aero_thrust
         self.rho = rho
+        self.omega = rpm * 2 * np.pi / 60  # Convert RPM to rad/s
 
     def __repr__(self):
-        return (f"OperationalCondition(wind_speed={self.wind_speed}, pitch={self.pitch}, "
+        return (f"OperationalCharacteristic(wind_speed={self.wind_speed}, pitch={self.pitch}, "
                 f"rpm={self.rpm}, aero_power={self.aero_power}, aero_thrust={self.aero_thrust})")
 
 
-class OperationalConditions:
-    def __init__(self, conditions: List[OperationalCondition] = None):
+class OperationalCharacteristics:
+    def __init__(self, conditions: List[OperationalCharacteristic] = None):
         self.conditions = conditions if conditions else []
 
     def load_from_file(self, file_path: Path):
@@ -39,7 +41,7 @@ class OperationalConditions:
                 aero_power = float(parts[3])
                 aero_thrust = float(parts[4])
 
-                condition = OperationalCondition(
+                condition = OperationalCharacteristic(
                     wind_speed=wind_speed,
                     pitch=pitch,
                     rpm=rpm,
@@ -51,4 +53,4 @@ class OperationalConditions:
                 continue
 
     def __repr__(self):
-        return f"OperationalConditions(num_conditions={len(self.conditions)})"
+        return f"OperationalCharacteristics(num_conditions={len(self.conditions)})"

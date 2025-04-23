@@ -1,10 +1,14 @@
 from pathlib import Path
 from src.Airfoil import Airfoil, plot_airfoil_shapes
 from src.Blade import Blade
-from src.OperationalConditions import OperationalConditions
+from src.OperationalCharacteristics import OperationalConditions, OperationalCondition
 
 # Set the base path
 base_path = Path(__file__).parent / "inputs/IEA-15-240-RWT"
+
+
+# Loading Data ________________________________________________________________
+
 
 # Load airfoils into a dictionary
 print("Loading airfoils...")
@@ -24,6 +28,13 @@ for i in range(50):
 
 print(f"Loaded {len(airfoil_map)} airfoils")
 
+# Load operational conditions
+print("Loading operational conditions...")
+opt_file = base_path / "IEA_15MW_RWT_Onshore.opt"
+ops = OperationalConditions()
+ops.load_from_file(opt_file)
+print(f"Loaded {len(ops.conditions)} operational conditions")
+
 # Load blade data
 print("Loading blade...")
 blade_file = base_path / "IEA-15-240-RWT_AeroDyn15_blade.dat"
@@ -31,12 +42,6 @@ blade = Blade()
 blade.load_from_file(blade_file, airfoil_map)
 print(f"Loaded blade with {len(blade.elements)} elements")
 
-# Load operational conditions
-print("Loading operational conditions...")
-opt_file = base_path / "IEA_15MW_RWT_Onshore.opt"
-ops = OperationalConditions()
-ops.load_from_file(opt_file)
-print(f"Loaded {len(ops.conditions)} operational conditions")
 
 # Display first blade element and operational condition
 print("\nFirst blade element:")
@@ -53,3 +58,13 @@ print(airfoil_map[0])
 print("\nPlotting selected airfoil shapes...")
 airfoil_indices = [0, 4, 9, 14, 19, 24, 29, 34, 39, 44, 49]
 plot_airfoil_shapes(list(airfoil_map.values()), airfoil_indices)
+
+# Processing  Data ________________________________________________________________
+
+blade. 
+ 
+operational_cond = OperatrionalCondition(
+    wind_speed=8.0, pitch=0.0, rpm=12.0, aero_power=0.0, aero_thrust=0.0)
+
+
+compute_induction_factors(self, a_guess=0.0, a_prime_guess=0.0, max_iterations=100, tolerance=1e-5, operational_condition=operational_cond):

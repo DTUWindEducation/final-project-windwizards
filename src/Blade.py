@@ -3,9 +3,10 @@ from typing import List, Dict, Optional
 import numpy as np
 from src.Airfoil import Airfoil
 from src.BladeElement import BladeElement
+from src.OperationalCharacteristics import OperationalConditions
 
 class Blade:
-    def __init__(self, elements: List[BladeElement] = None):
+    def __init__(self, elements: List[BladeElement] = None, operational_characteristics: OperationalConditions = None):
         """
         Initialize the Blade class.
 
@@ -16,6 +17,7 @@ class Blade:
         """
         self.elements = elements if elements else []
         self.R = max(element.r for element in self.elements) if self.elements else 0  # Tip radius
+        self.characteristic = 
         self.calculate_element_discretization_lengths()  # Calculate dr for each element
 
     def load_from_file(self, file_path: Path, airfoil_map: Dict[int, Airfoil] = None):

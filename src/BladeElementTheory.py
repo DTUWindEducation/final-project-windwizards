@@ -10,11 +10,9 @@ class BladeElementTheory:
         - blade (Blade): Blade object containing geometry and operational conditions
         """
         self.blade = blade
-        self.wind_speed = blade.wind_speed
-        self.omega = blade.omega
-        self.rho = blade.operational_conditions.rho if blade.operational_conditions else 1.225
+        
 
-    def compute_aerodynamic_performance(self, blade: Blade):
+    def compute_aerodynamic_performance(self, blade: Blade, operational_condition):
         """
         Compute the aerodynamic performance of the blade.
 
