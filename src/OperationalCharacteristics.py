@@ -18,12 +18,12 @@ class OperationalCharacteristic:
 
 
 class OperationalCharacteristics:
-    def __init__(self, conditions: List[OperationalCharacteristic] = None):
-        self.conditions = conditions if conditions else []
+    def __init__(self, characteristics: List[OperationalCharacteristic] = None):
+        self.characteristics = characteristics if characteristics else []
 
     def load_from_file(self, file_path: Path):
         lines = file_path.read_text(encoding='utf-8').splitlines()
-        self.conditions = []
+        self.characteristics = []
 
         for line in lines:
             line = line.strip()
@@ -48,9 +48,9 @@ class OperationalCharacteristics:
                     aero_power=aero_power,
                     aero_thrust=aero_thrust
                 )
-                self.conditions.append(condition)
+                self.characteristics.append(condition)
             except ValueError:
                 continue
 
     def __repr__(self):
-        return f"OperationalCharacteristics(num_conditions={len(self.conditions)})"
+        return f"OperationalCharacteristics(num_conditions={len(self.characteristics)})"
