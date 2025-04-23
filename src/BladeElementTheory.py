@@ -1,5 +1,6 @@
 import numpy as np
 from src.Blade import Blade
+from src.OperationalCondition import OperationalCondition
 
 class BladeElementTheory:
     def __init__(self, blade: Blade):
@@ -12,7 +13,7 @@ class BladeElementTheory:
         self.blade = blade
         
 
-    def compute_aerodynamic_performance(self, blade: Blade, operational_condition):
+    def compute_aerodynamic_performance(self, blade: Blade, operational_condition: OperationalCondition):
         """
         Compute the aerodynamic performance of the blade.
 
@@ -35,9 +36,11 @@ class BladeElementTheory:
         total_torque = 0
 
         # Get rotor properties
-        R = max(element.r for element in blade.elements)  # Rotor radius
+        R = blade.R
         A = np.pi * R**2  # Rotor area
-        V0 = self.wind_speed  # Free stream velocity
+        wind_speed = operational_condition.wind_speed  # Free stream velocity
+        omega = operational_condition.omega  # Rotor angular velocity
+        rho = operational_condition.rho  # Air density
 
         for element in blade.elements:
             # Get element properties
@@ -53,8 +56,8 @@ class BladeElementTheory:
 
             # Calculate relative wind speed
             V_rel = np.sqrt(
-                ((1 - a) * self.wind_speed)**2 + 
-                ((1 + a_prime) * self.omega * r)**2
+                ((1 - a) * wind_speed)**2 + 
+                ((1 + a_prime) * omega * r)**2
             )
             
             # Calculate lift and drag forces per unit length
@@ -66,8 +69,8 @@ class BladeElementTheory:
             Ft = L * np.sin(phi) - D * np.cos(phi)
             
             # Compute local contributions to thrust and torque
-            dT = 4 * np.pi * r * self.rho * self.wind_speed**2 * a * (1 - a) * dr
-            dM = 4 * np.pi * r**3 * self.rho * self.wind_speed * self.omega * a_prime * (1 - a) * dr
+            dT = 4 * np.pi * r * rho * wind_speed**2 * a * (1 - a) * dr
+            dM = 4 * np.pi * r**3 * rho * wind_speed * omega * a_prime * (1 - a) * dr
             
             # Store forces in element
             element.L = L
@@ -86,8 +89,8 @@ class BladeElementTheory:
         total_power = total_torque * self.omega
         
         # Calculate coefficients
-        denom_T = 0.5 * self.rho * A * V0**2
-        denom_P = 0.5 * self.rho * A * V0**3
+        denom_T = 0.5 * rho * A * wind_speed**2
+        denom_P = 0.5 * rho * A * wind_speed**3
         
         ct = total_thrust / denom_T if denom_T != 0 else 0
         cp = total_power / denom_P if denom_P != 0 else 0

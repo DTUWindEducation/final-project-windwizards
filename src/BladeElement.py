@@ -2,7 +2,7 @@ from typing import Optional
 import numpy as np
 
 class BladeElement:
-    def __init__(self, r: float, twist: float, chord: float, airfoil_id: int, airfoil: Optional['Airfoil'] = None, num_blades: int = 3):
+    def __init__(self, r: float, twist: float, chord: float, airfoil_id: int, airfoil: Optional['Airfoil'] = None):
 
         self.r = r                      # Spanwise position [m]
         self.twist = twist              # Twist angle [deg]
@@ -44,7 +44,7 @@ class BladeElement:
         return min(solidity, 1) #solidity can't exceed 1 for physical reasons
     
 
-    def compute_element_induction_factors(self, a, a_prime, phi, Cn, Ct, tolerance=1e-5, max_iterations=100):
+    def compute_element_induction_factors(self, a, a_prime, wind_speed, omega, r, phi, Cn, Ct, tolerance=1e-5, max_iterations=100):
         """
         Compute induction factors for a single blade element.
 
@@ -57,14 +57,13 @@ class BladeElement:
         Returns:
         - tuple: (axial induction factor, tangential induction factor)
         """
-        a = self.a
-        a_prime = self.a_prime
         solidity = self.solidity
-        phi = self.phi
-        Cn = self.Cn
-        Ct = self.Ct
 
         for _ in range(self.max_iterations):
+
+            phi = np.arctan2((1 - a) * wind_speed, 
+                        (1 + a_prime) * omega * r)
+            
             # Update axial induction factor
             a_new = 1 / (1 + (4 * np.sin(phi)**2) / (solidity * Cn))
             
@@ -88,35 +87,40 @@ class BladeElement:
         """
         a = a_guess
         a_prime = a_prime_guess
-        omega = operational_condiiton.omega
-
+        wind_speed = operational_condition.wind_speed
+        omega = operational_condition.omega
         r = self.r
-        phi = np.arctan2((1 - a) * self.wind_speed, 
-                        (1 + a_prime) * self.omega * r)
         
         # Get lift and drag coefficients from airfoil data
-        if element.airfoil and element.airfoil.aero_data:
+        if self.airfoil and self.airfoil.aero_data:
             # Calculate angle of attack
-            twist_rad = np.radians(element.twist)
-            pitch_rad = np.radians(self.blade.operational_conditions.pitch)
+            twist_rad = np.radians(self.twist)
+            
+            # Interpolate pitch angle based on wind speed
+            wind_speeds = np.array([op.wind_speed for op in self.blade.operational_characteristics])
+            pitches = np.array([np.radians(op.pitch) for op in self.blade.operational_characteristics])
+            pitch_rad = np.interp(operational_condition.wind_speed, wind_speeds, pitches)
+            
             alpha = phi - (pitch_rad + twist_rad)
             
-            # Find closest alpha in aero data
-            aero_data = element.airfoil.aero_data
+            # Interpolate Cl and Cd based on alpha in aero data
+            aero_data = self.airfoil.aero_data
             alphas = np.array([data.alpha for data in aero_data])
-            idx = np.argmin(np.abs(alphas - np.degrees(alpha)))
-            Cl = aero_data[idx].cl
-            Cd = aero_data[idx].cd
+            cls = np.array([data.cl for data in aero_data])
+            cds = np.array([data.cd for data in aero_data])
+            
+            Cl = np.interp(np.degrees(alpha), alphas, cls)
+            Cd = np.interp(np.degrees(alpha), alphas, cds)
             
             # Calculate normal and tangential coefficients
             Cn = Cl * np.cos(phi) + Cd * np.sin(phi)
             Ct = Cl * np.sin(phi) - Cd * np.cos(phi)
             
             # Compute induction factors for this element
-            a, a_prime = self.compute_element_induction_factors()
+            a, a_prime = self.compute_element_induction_factors(a, a_prime, wind_speed, omega, r, phi, Cn, Ct, tolerance=1e-5, max_iterations=100)
 
-            phi = np.arctan2((1 - self.a) * self.wind_speed, 
-                        (1 + self.a_prime) * self.omega * r)
+            phi = np.arctan2((1 - a) * wind_speed, 
+                (1 + a_prime) * omega * r)
             
             self.alpha = alpha
             self.cl = Cl

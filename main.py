@@ -68,3 +68,5 @@ operational_cond = OperatrionalCondition(
 
 
 compute_induction_factors(self, a_guess=0.0, a_prime_guess=0.0, max_iterations=100, tolerance=1e-5, operational_condition=operational_cond):
+
+element.compute_induction_factors(a_guess=a_guess, a_prime_guess=a_prime_guess, operational_characteristics=self.operational_characteristics, operational_condition=operational_condition)
