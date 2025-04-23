@@ -16,7 +16,7 @@ class Blade:
         - operational_conditions (Optional[Dict]): Dictionary containing operational conditions.
         """
         self.elements = elements if elements else []
-        self.R = max(element.r for element in self.elements) if self.elements else 0  # Tip radius
+        self.R = None  # Tip radius
         self.operational_characteristics = operational_characteristics
         
     def load_from_file(self, file_path: Path, airfoil_map: Dict[int, Airfoil] = None):
@@ -83,6 +83,7 @@ class Blade:
         
         for element in self.elements:
             element.calculate_solidity(operational_conditions=operational_condition)  # Calculate solidity for each element
+            self.R = max(element.r for element in self.elements)
             element.compute_induction_factors(a_guess=a_guess, a_prime_guess=a_prime_guess,max_iterations=max_iterations, tolerance=tolerance, operational_characteristics=self.operational_characteristics, operational_condition=operational_condition)
             
         

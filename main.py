@@ -50,7 +50,7 @@ print(f"Blade characteristic: {blade.operational_characteristics} m")
 # Processing  Data _____________________________________________________________
 
 # Create operational condition object
-operational_condition = OperationalCondition(wind_speed=8, rho=1.225, num_blades=3)
+operational_condition = OperationalCondition(wind_speed=10, rho=1.225, num_blades=3)
 operational_condition.calculate_angular_velocity(blade=blade)
 print(operational_condition)
 
