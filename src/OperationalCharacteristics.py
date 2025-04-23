@@ -53,4 +53,4 @@ class OperationalCharacteristics:
                 continue
 
     def __repr__(self):
-        return f"OperationalCharacteristics(num_conditions={len(self.characteristics)})"
+        return f"OperationalCharacteristics(num_conditions={len(self.characteristics)})."

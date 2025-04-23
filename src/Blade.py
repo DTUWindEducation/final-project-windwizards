@@ -4,7 +4,6 @@ import numpy as np
 from src.Airfoil import Airfoil
 from src.BladeElement import BladeElement
 from src.OperationalCharacteristics import OperationalCharacteristics
-from src.OperationalCondition import OperationalCondition
 
 class Blade:
     def __init__(self, elements: List[BladeElement] = None, operational_characteristics: OperationalCharacteristics = None):
@@ -18,9 +17,8 @@ class Blade:
         """
         self.elements = elements if elements else []
         self.R = max(element.r for element in self.elements) if self.elements else 0  # Tip radius
-        self.operational_characteristics = operational_characteristics if operational_characteristics else None
-        self.calculate_element_discretization_lengths()  # Calculate dr for each element
-
+        self.operational_characteristics = operational_characteristics
+        
     def load_from_file(self, file_path: Path, airfoil_map: Dict[int, Airfoil] = None):
         """
         Load blade elements from a file.
@@ -45,7 +43,7 @@ class Blade:
                 r = float(parts[0])          # Radius position
                 twist = float(parts[4])      # Twist angle in degrees
                 chord = float(parts[5])      # Chord length
-                airfoil_id = int(parts[6])   # Airfoil index
+                airfoil_id = (int(parts[6])-1) # Airfoil index
             except ValueError:
                 continue
 
@@ -56,7 +54,8 @@ class Blade:
     def calculate_element_discretization_lengths(self):
         """Calculate and assign the discretization length (dr) for each blade element."""
         if not self.elements:
-            return
+            raise ValueError("No blade elements found. Please load blade data first for the function to work.")
+
 
         for i, element in enumerate(self.elements):
             if i == 0:  # First element
@@ -80,8 +79,12 @@ class Blade:
         Returns:
         - List[BladeElement]: List of blade elements with updated induction factors.
         """
+        self.calculate_element_discretization_lengths()  # Calculate dr for each element
+        
         for element in self.elements:
+            element.calculate_solidity(operational_conditions=operational_condition)  # Calculate solidity for each element
             element.compute_induction_factors(a_guess=a_guess, a_prime_guess=a_prime_guess,max_iterations=max_iterations, tolerance=tolerance, operational_characteristics=self.operational_characteristics, operational_condition=operational_condition)
+            
         
         return self.elements
 

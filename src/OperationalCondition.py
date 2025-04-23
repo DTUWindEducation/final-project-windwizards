@@ -6,17 +6,17 @@ from pathlib import Path
 from src.Blade import Blade
 
 class OperationalCondition:
-    def __init__(self, wind_speed: float | List[float], rho: float = 1.225, num_blades: int = 3):
+    def __init__(self, wind_speed: float, rho: float = 1.225, num_blades: int = 3):
         """
         Initialize the operational condition with wind speed, angular velocity, and air density.
-        Wind speed can be a single float or a list of floats.
+        Wind speed can be a single float.
         
         Parameters:
-        - wind_speed (float | List[float]): Wind speed in m/s.
+        - wind_speed (float): Wind speed in m/s.
         - rho (float): Air density in kg/m^3. Default is 1.225 kg/m^3.
         - num_blades (int): Number of blades. Default is 3.
-        - rmp (float | list[float]): Rotations per minute. Default is None.
-        - omega (float | List[float]): Angular velocity in rad/s. Default is None.
+        - rmp (float): Rotations per minute. Default is None.
+        - omega (float): Angular velocity in rad/s. Default is None.
         """
         self.wind_speed = wind_speed
         self.rho = rho
@@ -36,15 +36,11 @@ class OperationalCondition:
         - self: The OperationalCondition object with updated rpm and omega.
         """
         # Interpolate pitch angle based on wind speed
-        wind_speeds = np.array([blade.operational_characteristics[i].wind_speed for i in range(len(blade.operational_characteristics))])
-        rpms = np.array([blade.operational_characteristics[i].rpm for i in range(len(blade.operational_characteristics))])
+        wind_speeds = np.array([blade.operational_characteristics.characteristics[i].wind_speed for i in range(len(blade.operational_characteristics.characteristics))])
+        rpms = np.array([blade.operational_characteristics.characteristics[i].rpm for i in range(len(blade.operational_characteristics.characteristics))])
         
-        if isinstance(self.wind_speed, list):
-            self.rpm = np.interp(self.wind_speed, wind_speeds, rpms)
-            self.omega = self.rpm * 2 * np.pi / 60
-        else:
-            self.rpm = np.interp(self.wind_speed, wind_speeds, rpms)
-            self.omega = self.rpm * 2 * np.pi / 60
+        self.rpm = np.interp(self.wind_speed, wind_speeds, rpms)
+        self.omega = self.rpm * 2 * np.pi / 60
         return self
 
         

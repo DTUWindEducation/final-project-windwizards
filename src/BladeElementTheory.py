@@ -13,7 +13,7 @@ class BladeElementTheory:
         self.blade = blade
         
 
-    def compute_aerodynamic_performance(self, blade: Blade, operational_condition: OperationalCondition):
+    def compute_aerodynamic_performance(self, operational_condition: OperationalCondition):
         """
         Compute the aerodynamic performance of the blade.
 
@@ -36,13 +36,13 @@ class BladeElementTheory:
         total_torque = 0
 
         # Get rotor properties
-        R = blade.R
+        R = self.blade.R
         A = np.pi * R**2  # Rotor area
         wind_speed = operational_condition.wind_speed  # Free stream velocity
         omega = operational_condition.omega  # Rotor angular velocity
         rho = operational_condition.rho  # Air density
 
-        for element in blade.elements:
+        for element in self.blade.elements:
             # Get element properties
             r = element.r
             dr = element.dr
@@ -61,8 +61,8 @@ class BladeElementTheory:
             )
             
             # Calculate lift and drag forces per unit length
-            L = 0.5 * self.rho * V_rel**2 * chord * Cl
-            D = 0.5 * self.rho * V_rel**2 * chord * Cd
+            L = 0.5 * rho * V_rel**2 * chord * Cl
+            D = 0.5 * rho * V_rel**2 * chord * Cd
             
             # Project forces to normal and tangential directions
             Fn = L * np.cos(phi) + D * np.sin(phi)
@@ -86,7 +86,7 @@ class BladeElementTheory:
             total_torque += dM
 
         # Calculate total power
-        total_power = total_torque * self.omega
+        total_power = total_torque * omega
         
         # Calculate coefficients
         denom_T = 0.5 * rho * A * wind_speed**2

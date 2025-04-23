@@ -3,6 +3,9 @@ from src.Airfoil import Airfoil, plot_airfoil_shapes
 from src.Blade import Blade
 from src.OperationalCharacteristics import OperationalCharacteristics, OperationalCharacteristic
 from src.OperationalCondition import OperationalCondition
+from src.BladeElementTheory import BladeElementTheory
+
+import numpy as np
 
 # Set the base path
 base_path = Path(__file__).parent / "inputs/IEA-15-240-RWT"
@@ -32,43 +35,53 @@ print(f"Loaded {len(airfoil_map)} airfoils")
 # Load operational conditions
 print("Loading operational conditions...")
 opt_file = base_path / "IEA_15MW_RWT_Onshore.opt"
-ops = OperationalCharacteristic()
+ops = OperationalCharacteristics()
 ops.load_from_file(opt_file)
-print(f"Loaded {len(ops.conditions)} operational conditions")
+print(f"Loaded {len(ops.characteristics)} operational conditions")
 
 # Load blade data
 print("Loading blade...")
 blade_file = base_path / "IEA-15-240-RWT_AeroDyn15_blade.dat"
-blade = Blade()
-blade.load_from_file(blade_file, airfoil_map)
+blade = Blade(operational_characteristics=ops)  # Initialize blade with operational characteristics
+blade.load_from_file(file_path=blade_file,airfoil_map= airfoil_map)
 print(f"Loaded blade with {len(blade.elements)} elements")
+print(f"Blade characteristic: {blade.operational_characteristics} m")
 
-
-# Display first blade element and operational condition
-print("\nFirst blade element:")
-print(blade.elements[0])
-
-print("\nFirst operational condition:")
-print(ops.conditions[0])
-
-# Display first airfoil summary
-print("\nFirst airfoil summary:")
-print(airfoil_map[0])
-
-# Plot selected airfoil shapes
-print("\nPlotting selected airfoil shapes...")
-airfoil_indices = [0, 4, 9, 14, 19, 24, 29, 34, 39, 44, 49]
-plot_airfoil_shapes(list(airfoil_map.values()), airfoil_indices)
+# Processing  Data _____________________________________________________________
 
 # Create operational condition object
-operational_condition = OperationalCondition(wind_speed=8.0, rho=1.225, num_blades=3)
-operational_condition.calculate_angular_velocity(blade)
+operational_condition = OperationalCondition(wind_speed=8, rho=1.225, num_blades=3)
+operational_condition.calculate_angular_velocity(blade=blade)
 print(operational_condition)
 
-# Processing  Data ________________________________________________________________
+# Calculate induction factors for each blade element
+print("Calculating induction factors for each blade element...")
+blade.compute_induction_factors_blade(operational_condition=operational_condition)
+
+# Run blade element momentum theory
+print("Running blade element momentum theory...")
+bet = BladeElementTheory(blade=blade)
+result = bet.compute_aerodynamic_performance(operational_condition=operational_condition)
+print(f"Total Thrust: {result[0]} N")
+print(f"Total Torque: {result[1]} Nm")
+print(f"Total Power: {result[2]} W")
+print(f"Thrust Coefficient (CT): {result[3]}")
+print(f"Power Coefficient (CP): {result[4]}")
 
 
 
-compute_induction_factors(self, a_guess=0.0, a_prime_guess=0.0, max_iterations=100, tolerance=1e-5, operational_condition=operational_cond):
+# # Display first blade element and operational condition
+# print("\nFirst blade element:")
+# print(blade.elements[0])
 
-element.compute_induction_factors(a_guess=a_guess, a_prime_guess=a_prime_guess, operational_characteristics=self.operational_characteristics, operational_condition=operational_condition)
+# print("\nFirst operational condition:")
+# print(ops.characteristics[0])
+
+# # Display first airfoil summary
+# print("\nFirst airfoil summary:")
+# print(airfoil_map[0])
+
+# # Plot selected airfoil shapes
+# print("\nPlotting selected airfoil shapes...")
+# airfoil_indices = [0, 4, 9, 14, 19, 24, 29, 34, 39, 44, 49]
+# plot_airfoil_shapes(list(airfoil_map.values()), airfoil_indices)

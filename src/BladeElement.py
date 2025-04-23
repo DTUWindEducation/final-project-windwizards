@@ -25,13 +25,12 @@ class BladeElement:
         self.Fn = None                 # Normal force [N]
         self.Ft = None                 # Tangential force [N]
         self.V_rel = None              # Relative wind speed [m/s]
-        
-        self.solidity = self.calculate_solidity()  # Calculate solidity based on the number of blades and chord length
+        self.solidity = None           # Solidity of the blade element [1]
 
 
     def calculate_solidity(self, operational_conditions=None):
         """
-        Calculate the solidity of the blade element.
+        Calculate the solidity of the blade element and assign it to self.solidity.
 
         Returns:
         - solidity (float): Solidity of the blade element.
@@ -39,10 +38,12 @@ class BladeElement:
         num_blades = operational_conditions.num_blades           # Number of blades (default value)
 
         if self.r == 0:
-            return 1
+            self.solidity = 1
+            return self.solidity
         solidity = (num_blades * self.chord) / (2 * np.pi * self.r)
-        return min(solidity, 1) #solidity can't exceed 1 for physical reasons
-    
+        solidity = min(solidity, 1) #solidity can't exceed 1 for physical reasons
+        self.solidity = solidity
+        return self.solidity
 
     def compute_element_induction_factors(self, a, a_prime, wind_speed, omega, r, phi, Cn, Ct, tolerance=1e-5, max_iterations=100):
         """
@@ -57,21 +58,20 @@ class BladeElement:
         Returns:
         - tuple: (axial induction factor, tangential induction factor)
         """
-        solidity = self.solidity
 
-        for _ in range(self.max_iterations):
+        for _ in range(max_iterations):
 
             phi = np.arctan2((1 - a) * wind_speed, 
                         (1 + a_prime) * omega * r)
             
-            # Update axial induction factor
-            a_new = 1 / (1 + (4 * np.sin(phi)**2) / (solidity * Cn))
-            
-            # Update tangential induction factor
-            a_prime_new = 1 / (1 + (4 * np.sin(phi) * np.cos(phi)) / (solidity * Ct))
+            # Simplified update (without corrections)
+            a_new = 1 / ( (4 * np.sin(phi)**2) / (self.solidity * Cn) + 1 )
+            a_prime_new = 1 / ( (4 * np.sin(phi) * np.cos(phi)) / (self.solidity * Ct) - 1 )
+            # Add Glauert correction for a > ~0.4
+            # Add Prandtl tip/hub loss corrections
             
             # Check for convergence
-            if abs(a - a_new) < self.tolerance and abs(a_prime - a_prime_new) < self.tolerance:
+            if abs(a - a_new) < tolerance and abs(a_prime - a_prime_new) < tolerance:
                 break
             
             a, a_prime = a_new, a_prime_new
@@ -90,6 +90,8 @@ class BladeElement:
         wind_speed = operational_condition.wind_speed
         omega = operational_condition.omega
         r = self.r
+        phi = np.arctan2((1 - a) * wind_speed, 
+                (1 + a_prime) * omega * r)
         
         # Get lift and drag coefficients from airfoil data
         if self.airfoil and self.airfoil.aero_data:
@@ -97,8 +99,8 @@ class BladeElement:
             twist_rad = np.radians(self.twist)
             
             # Interpolate pitch angle based on wind speed
-            wind_speeds = np.array([op.wind_speed for op in self.blade.operational_characteristics])
-            pitches = np.array([np.radians(op.pitch) for op in self.blade.operational_characteristics])
+            wind_speeds = np.array([op.wind_speed for op in operational_characteristics.characteristics])
+            pitches = np.array([np.radians(op.pitch) for op in operational_characteristics.characteristics])
             pitch_rad = np.interp(operational_condition.wind_speed, wind_speeds, pitches)
             
             alpha = phi - (pitch_rad + twist_rad)
@@ -130,6 +132,8 @@ class BladeElement:
             self.phi = phi
             self.Cn = Cn
             self.Ct = Ct
+        
+        return self.a, self.a_prime, self.alpha, self.cl, self.cd, self.phi, self.Cn, self.Ct
 
 
     def __repr__(self):
