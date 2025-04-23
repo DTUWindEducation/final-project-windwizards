@@ -3,10 +3,11 @@ from typing import List, Dict, Optional
 import numpy as np
 from src.Airfoil import Airfoil
 from src.BladeElement import BladeElement
-from src.OperationalCharacteristics import OperationalConditions
+from src.OperationalCharacteristics import OperationalCharacteristics
+from src.OperationalCondition import OperationalCondition
 
 class Blade:
-    def __init__(self, elements: List[BladeElement] = None, operational_characteristics: OperationalConditions = None):
+    def __init__(self, elements: List[BladeElement] = None, operational_characteristics: OperationalCharacteristics = None):
         """
         Initialize the Blade class.
 
@@ -17,7 +18,7 @@ class Blade:
         """
         self.elements = elements if elements else []
         self.R = max(element.r for element in self.elements) if self.elements else 0  # Tip radius
-        self.characteristic = 
+        self.operational_characteristics = operational_characteristics if operational_characteristics else None
         self.calculate_element_discretization_lengths()  # Calculate dr for each element
 
     def load_from_file(self, file_path: Path, airfoil_map: Dict[int, Airfoil] = None):
@@ -66,5 +67,29 @@ class Blade:
                 dr = (self.elements[i + 1].r - self.elements[i - 1].r) / 2
             element.dr = dr
 
+    def compute_induction_factors_blade(self, a_guess=0.0, a_prime_guess=0.0, max_iterations=100, tolerance=1e-5, operational_condition=None):
+        """
+        Compute induction factors for all blade elements.
+
+        Parameters:
+        - a_guess (float): Initial guess for axial induction factor.
+        - a_prime_guess (float): Initial guess for tangential induction factor.
+        - max_iterations (int): Maximum number of iterations for convergence.
+        - tolerance (float): Convergence tolerance.
+
+        Returns:
+        - List[BladeElement]: List of blade elements with updated induction factors.
+        """
+        for element in self.elements:
+            element.compute_induction_factors(a_guess=a_guess, a_prime_guess=a_prime_guess,max_iterations=max_iterations, tolerance=tolerance, operational_characteristics=self.operational_characteristics, operational_condition=operational_condition)
+        
+        return self.elements
+
     def __repr__(self):
         return f"Blade with {len(self.elements)} elements, {self.num_blades} blades, and operational conditions: {self.operational_conditions}"
+    
+    def __str__(self):
+        return (f"Blade:\n"
+                f"  Number of Elements: {len(self.elements)}\n"
+                f"  Tip Radius: {self.R} m\n"
+                f"  Operational Characteristics: {self.operational_characteristics}\n")
