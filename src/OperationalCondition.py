@@ -15,6 +15,8 @@ class OperationalCondition:
         - wind_speed (float | List[float]): Wind speed in m/s.
         - rho (float): Air density in kg/m^3. Default is 1.225 kg/m^3.
         - num_blades (int): Number of blades. Default is 3.
+        - rmp (float | list[float]): Rotations per minute. Default is None.
+        - omega (float | List[float]): Angular velocity in rad/s. Default is None.
         """
         self.wind_speed = wind_speed
         self.rho = rho
@@ -28,17 +30,22 @@ class OperationalCondition:
         Calculate the angular velocity in rad/s from RPM.
         
         Parameters:
-        - rmp (float): Rotations per minute.
+        - blade (Blade): Blade object containing operational characteristics.
         
         Returns:
-        - float: Angular velocity in rad/s.
+        - self: The OperationalCondition object with updated rpm and omega.
         """
         # Interpolate pitch angle based on wind speed
         wind_speeds = np.array([blade.operational_characteristics[i].wind_speed for i in range(len(blade.operational_characteristics))])
-        rpms = np.array([np.radians(blade.operational_characteristics.pitch) for blade.operational_characteristics in self.blade.operational_characteristics])
+        rpms = np.array([blade.operational_characteristics[i].rpm for i in range(len(blade.operational_characteristics))])
         
-        return(self.rpm = np.interp(self.wind_speed, wind_speeds, rpms),
-        self.omega = self.rpm * 2 * np.pi / 60)
+        if isinstance(self.wind_speed, list):
+            self.rpm = np.interp(self.wind_speed, wind_speeds, rpms)
+            self.omega = self.rpm * 2 * np.pi / 60
+        else:
+            self.rpm = np.interp(self.wind_speed, wind_speeds, rpms)
+            self.omega = self.rpm * 2 * np.pi / 60
+        return self
 
         
 
@@ -47,7 +54,12 @@ class OperationalCondition:
                 f"rho={self.rho}, num_blades={self.num_blades})")
     
     def __str__(self):
-        return (f"Operational Condition:\n"
+        output = (f"Operational Condition:\n"
                 f"  Wind Speed: {self.wind_speed} m/s\n"
                 f"  Air Density: {self.rho} kg/m^3\n"
                 f"  Number of Blades: {self.num_blades}\n")
+        if self.rpm is not None:
+            output += f"  RPM: {self.rpm}\n"
+        if self.omega is not None:
+            output += f"  Angular Velocity: {self.omega} rad/s\n"
+        return output
