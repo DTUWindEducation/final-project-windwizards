@@ -46,6 +46,7 @@ blade = Blade(operational_characteristics=ops)  # Initialize blade with operatio
 blade.load_from_file(file_path=blade_file,airfoil_map= airfoil_map)
 print(f"Loaded blade with {len(blade.elements)} elements")
 print(f"Blade characteristic: {blade.operational_characteristics} m")
+ops.plot_characteristics(V_min=0, V_max=30, num_points=100)
 
 # Processing  Data _____________________________________________________________
 
