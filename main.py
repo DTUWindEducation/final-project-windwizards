@@ -18,9 +18,10 @@ base_path = Path(__file__).parent / "inputs/IEA-15-240-RWT"
 print("Loading airfoils...")
 airfoil_map = {}
 
-for i in range(50):
-    idx = f"{i:02d}"
-    coord_file = base_path / f"Airfoils/IEA-15-240-RWT_AF{idx}_Coords.txt"
+# Iterate through all coordinate files in the Airfoils directory
+for coord_file in (base_path / "Airfoils").glob("IEA-15-240-RWT_AF*_Coords.txt"):
+    # Extract the index from the filename
+    idx = coord_file.stem.split('_')[-2][2:]
     polar_file = base_path / f"Airfoils/IEA-15-240-RWT_AeroDyn15_Polar_{idx}.dat"
 
     # Create Airfoil object and load data from the files
@@ -28,7 +29,7 @@ for i in range(50):
     airfoil.load_from_polar_and_coords(coord_file, polar_file)
     
     # Store the Airfoil in the map
-    airfoil_map[i] = airfoil
+    airfoil_map[int(idx)] = airfoil
 
 print(f"Loaded {len(airfoil_map)} airfoils")
 
@@ -81,7 +82,7 @@ print(f"Power Coefficient (CP): {result[4]}")
 # print("\nFirst airfoil summary:")
 # print(airfoil_map[0])
 
-# # Plot selected airfoil shapes
-# print("\nPlotting selected airfoil shapes...")
-# airfoil_indices = [0, 4, 9, 14, 19, 24, 29, 34, 39, 44, 49]
-# plot_airfoil_shapes(list(airfoil_map.values()), airfoil_indices)
+# Plot selected airfoil shapes
+print("\nPlotting selected airfoil shapes...")
+airfoil_indices = [0, 4, 9, 14, 19, 24, 29, 34, 39, 44, 49]
+plot_airfoil_shapes(list(airfoil_map.values()), airfoil_indices)

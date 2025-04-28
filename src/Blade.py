@@ -5,6 +5,7 @@ from src.Airfoil import Airfoil
 from src.BladeElement import BladeElement
 from src.OperationalCharacteristics import OperationalCharacteristics
 
+
 class Blade:
     def __init__(self, elements: List[BladeElement] = None, operational_characteristics: OperationalCharacteristics = None):
         """
@@ -56,7 +57,6 @@ class Blade:
         if not self.elements:
             raise ValueError("No blade elements found. Please load blade data first for the function to work.")
 
-
         for i, element in enumerate(self.elements):
             if i == 0:  # First element
                 dr = (self.elements[i + 1].r - element.r) / 2
@@ -85,7 +85,6 @@ class Blade:
             element.calculate_solidity(operational_conditions=operational_condition)  # Calculate solidity for each element
             element.compute_induction_factors(a_guess=a_guess, a_prime_guess=a_prime_guess,max_iterations=max_iterations, tolerance=tolerance, operational_characteristics=self.operational_characteristics, operational_condition=operational_condition)
             
-        
         return self.elements
 
     def __repr__(self):
