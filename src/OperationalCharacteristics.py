@@ -1,6 +1,7 @@
 from typing import List
 from pathlib import Path
 import numpy as np
+import matplotlib.pyplot as plt
 
 class OperationalCharacteristic:
     def __init__(self, wind_speed: float, pitch: float, rpm: float, aero_power: float, aero_thrust: float, rho: float = 1.225):
@@ -51,6 +52,31 @@ class OperationalCharacteristics:
                 self.characteristics.append(condition)
             except ValueError:
                 continue
+
+    def plot_characteristics(self, V_min: float = 0, V_max: float = 30, num_points: int = 100):
+        """Compute optimal operational strategy, i.e.,  blade pitch angle theta_p
+        and rotational speed omega, as function of wind speed V_0, based on 
+        the provided operational strategy"""
+        V = np.linspace(V_min, V_max, num_points)
+        theta_p = np.zeros(num_points)
+        omega = np.zeros(num_points)
+
+        for i, wind_speed in enumerate(V):
+            # Find the closest operational characteristic
+            closest_condition = min(self.characteristics, key=lambda x: abs(x.wind_speed - wind_speed))
+            theta_p[i] = closest_condition.pitch
+            omega[i] = closest_condition.omega
+
+        plt.figure(figsize=(10, 6))
+        plt.plot(V, theta_p, label='Pitch Angle (degrees)', color='blue')
+        plt.plot(V, omega, label='Angular Velocity (rad/s)', color='red')
+        plt.xlabel('Wind Speed (m/s)')
+        plt.ylabel('Operational Characteristics')
+        plt.title('Operational Characteristics vs Wind Speed')
+        plt.legend()
+        plt.grid()
+        plt.show()
+
 
     def __repr__(self):
         return f"OperationalCharacteristics(num_conditions={len(self.characteristics)})."
