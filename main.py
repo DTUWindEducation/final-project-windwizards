@@ -5,15 +5,32 @@ from src.OperationalCharacteristics import OperationalCharacteristics, Operation
 from src.OperationalCondition import OperationalCondition
 from src.BladeElementTheory import BladeElementTheory
 from src.PerformanceAnalyzer import PerformanceAnalyzer
+from src import save_results, save_plots
 
 import numpy as np
 import matplotlib.pyplot as plt
-# Set the base path
-base_path = Path(__file__).parent / "inputs/IEA-15-240-RWT"
+
+
+
+# Input _______________________________________________________________________
+
+# Define operational conditions
+wind_speed = 10.0  # Wind speed in m/s
+rho = 1.225  # Air density in kg/m^3 (standard value at sea level)
+num_blades = 3  # Number of blades
+
+min_wind_speed = 0  # Minimum wind speed for performance analysis
+max_wind_speed = 25  # Maximum wind speed for performance analysis
+wind_speed_discretisation = 100  # Number of points for wind speed discretization
+
+# Define the blade data source 
+Data_Source = "IEA-15-240-RWT"  # Data source name
 
 
 # Loading Data ________________________________________________________________
 
+# Set the Data source base path
+base_path = Path(__file__).parent / "inputs" / Data_Source
 
 # Load airfoils into a dictionary
 print("Loading airfoils...")
@@ -53,7 +70,7 @@ print(f"Blade characteristic: {blade.operational_characteristics} m")
 # Processing  Data _____________________________________________________________
 
 # Create operational condition object
-operational_condition = OperationalCondition(wind_speed=10, rho=1.225, num_blades=3)
+operational_condition = OperationalCondition(wind_speed=wind_speed, rho=rho, num_blades=num_blades)
 operational_condition.calculate_angular_velocity(blade=blade)
 print(operational_condition)
 
@@ -65,33 +82,27 @@ blade.compute_induction_factors_blade(operational_condition=operational_conditio
 print("Running blade element momentum theory...")
 bet = BladeElementTheory(blade=blade)
 result = bet.compute_aerodynamic_performance(operational_condition=operational_condition)
+
+# Results _____________________________________________________________
+
 print(f"Total Thrust: {result[0]} N")
 print(f"Total Torque: {result[1]} Nm")
 print(f"Total Power: {result[2]} W")
 print(f"Thrust Coefficient (CT): {result[3]}")
 print(f"Power Coefficient (CP): {result[4]}")
 
-# performance_1_30ms = PerformanceAnalyzer(blade=blade, min_wind_speed=1, max_wind_speed=30, num_points=100)
-# performance_1_30ms.plot_power_curve()
-# performance_1_30ms.plot_thrust_curve()
-# performance_1_30ms.plot_torque_curve()
-# plt.show()
+# Save results and plots
+output_folder = Path(__file__).parent / "outputs" / f"wind_speed_{operational_condition.wind_speed}ms"
+output_file = output_folder / "results.txt"
+
+# Create performance analyzer
+performance_analyzer = PerformanceAnalyzer(blade=blade, min_wind_speed=min_wind_speed, max_wind_speed=max_wind_speed, num_points=wind_speed_discretisation)
+
+# Save all results and plots
+save_results(operational_condition, result, output_file, Data_Source)
+save_plots(output_folder, performance_analyzer)
+
+print(f"Results and plots saved in {output_folder}")
 
 blade.plot_blade_shape(10)
 plt.show()
-
-# # Display first blade element and operational condition
-# print("\nFirst blade element:")
-# print(blade.elements[0])
-
-# print("\nFirst operational condition:")
-# print(ops.characteristics[0])
-
-# # Display first airfoil summary
-# print("\nFirst airfoil summary:")
-# print(airfoil_map[0])
-
-# Plot selected airfoil shapes
-print("\nPlotting selected airfoil shapes...")
-airfoil_indices = [0, 4, 9, 14, 19, 24, 29, 34, 39, 44, 49]
-plot_airfoil_shapes(list(airfoil_map.values()), airfoil_indices)
