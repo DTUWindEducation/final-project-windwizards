@@ -4,8 +4,8 @@ from src.Blade import Blade
 from src.OperationalCharacteristics import OperationalCharacteristics, OperationalCharacteristic
 from src.OperationalCondition import OperationalCondition
 from src.BladeElementTheory import BladeElementTheory
-
 import numpy as np
+
 
 # Set the base path
 base_path = Path(__file__).parent / "inputs/IEA-15-240-RWT"
@@ -50,7 +50,7 @@ print(f"Blade characteristic: {blade.operational_characteristics} m")
 # Processing  Data _____________________________________________________________
 
 # Create operational condition object
-operational_condition = OperationalCondition(wind_speed=10, rho=1.225, num_blades=3)
+operational_condition = OperationalCondition(wind_speed=20, rho=1.225, num_blades=3)
 operational_condition.calculate_angular_velocity(blade=blade)
 print(operational_condition)
 
@@ -81,7 +81,7 @@ print(f"Power Coefficient (CP): {result[4]}")
 # print("\nFirst airfoil summary:")
 # print(airfoil_map[0])
 
-# # Plot selected airfoil shapes
-# print("\nPlotting selected airfoil shapes...")
-# airfoil_indices = [0, 4, 9, 14, 19, 24, 29, 34, 39, 44, 49]
-# plot_airfoil_shapes(list(airfoil_map.values()), airfoil_indices)
+# Plot selected airfoil shapes
+print("\nPlotting selected airfoil shapes...")
+airfoil_indices = [0, 4, 9, 14, 19, 24, 29, 34, 39, 44, 49]
+plot_airfoil_shapes(list(airfoil_map.values()), airfoil_indices)

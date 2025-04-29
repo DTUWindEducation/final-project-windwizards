@@ -85,6 +85,11 @@ class BladeElementTheory:
             total_thrust += dT
             total_torque += dM
 
+        num_blades = operational_condition.num_blades
+
+        total_thrust *= num_blades
+        total_torque *= num_blades
+        
         # Calculate total power
         total_power = total_torque * omega
         
