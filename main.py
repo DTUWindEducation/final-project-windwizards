@@ -4,9 +4,10 @@ from src.Blade import Blade
 from src.OperationalCharacteristics import OperationalCharacteristics, OperationalCharacteristic
 from src.OperationalCondition import OperationalCondition
 from src.BladeElementTheory import BladeElementTheory
+from src.PerformanceAnalyzer import PerformanceAnalyzer
 
 import numpy as np
-
+import matplotlib.pyplot as plt
 # Set the base path
 base_path = Path(__file__).parent / "inputs/IEA-15-240-RWT"
 
@@ -46,7 +47,7 @@ blade = Blade(operational_characteristics=ops)  # Initialize blade with operatio
 blade.load_from_file(file_path=blade_file,airfoil_map= airfoil_map)
 print(f"Loaded blade with {len(blade.elements)} elements")
 print(f"Blade characteristic: {blade.operational_characteristics} m")
-ops.plot_characteristics(V_min=0, V_max=30, num_points=100)
+# ops.plot_characteristics(V_min=0, V_max=30, num_points=100)
 
 # Processing  Data _____________________________________________________________
 
@@ -69,7 +70,14 @@ print(f"Total Power: {result[2]} W")
 print(f"Thrust Coefficient (CT): {result[3]}")
 print(f"Power Coefficient (CP): {result[4]}")
 
+# performance_1_30ms = PerformanceAnalyzer(blade=blade, min_wind_speed=1, max_wind_speed=30, num_points=100)
+# performance_1_30ms.plot_power_curve()
+# performance_1_30ms.plot_thrust_curve()
+# performance_1_30ms.plot_torque_curve()
+# plt.show()
 
+blade.plot_blade_shape(10)
+plt.show()
 
 # # Display first blade element and operational condition
 # print("\nFirst blade element:")
