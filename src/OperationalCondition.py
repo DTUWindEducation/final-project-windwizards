@@ -15,13 +15,13 @@ class OperationalCondition:
         - wind_speed (float): Wind speed in m/s.
         - rho (float): Air density in kg/m^3. Default is 1.225 kg/m^3.
         - num_blades (int): Number of blades. Default is 3.
-        - rmp (float): Rotations per minute. Default is None.
+        - rpm (float): Rotations per minute. Default is None.
         - omega (float): Angular velocity in rad/s. Default is None.
         """
         self.wind_speed = wind_speed
         self.rho = rho
         self.num_blades = num_blades
-        self.rmp = None  # Placeholder for RPM, to be set by given blade
+        self.rpm = None  # Placeholder for RPM, to be set by given blade
         self.omega = None # Placeholder for angular velocity, to be set by given blade
 
         
