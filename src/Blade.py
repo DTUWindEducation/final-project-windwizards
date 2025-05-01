@@ -164,7 +164,7 @@ class Blade:
     
 
     def __repr__(self):
-        return f"Blade with {len(self.elements)} elements, {self.num_blades} blades, and operational conditions: {self.operational_conditions}"
+        return f"Blade with {len(self.elements)} elements and operational characteristics: {self.operational_characteristics}"
     
     def __str__(self):
         return (f"Blade:\n"
