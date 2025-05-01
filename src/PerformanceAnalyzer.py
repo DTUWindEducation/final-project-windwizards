@@ -120,5 +120,3 @@ class PerformanceAnalyzer:
         plt.grid()
         plt.legend()
         # plt.show()
-
-

@@ -208,3 +208,19 @@ def test_integration_with_blade_class(sample_blade, sample_operational_condition
     for element in sample_blade.elements:
         assert element.dT is not None
         assert element.dM is not None
+
+def test_init_method():
+    """Test the __init__ method of BladeElementTheory."""
+    # Create a mock blade
+    mock_blade = MagicMock(spec=Blade)
+    mock_blade.R = 5.0
+    mock_blade.elements = [MagicMock() for _ in range(3)]
+    
+    # Initialize the BladeElementTheory with the mock blade
+    bet = BladeElementTheory(blade=mock_blade)
+    
+    # Assertions
+    assert hasattr(bet, 'blade'), "BladeElementTheory should have a 'blade' attribute"
+    assert bet.blade is mock_blade, "The 'blade' attribute should reference the provided blade"
+    assert bet.blade.R == 5.0, "The blade radius should be preserved"
+    assert len(bet.blade.elements) == 3, "The blade elements should be preserved"
