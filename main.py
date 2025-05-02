@@ -19,13 +19,23 @@ wind_speed = 10.0  # Wind speed in m/s
 rho = 1.225  # Air density in kg/m^3 (standard value at sea level)
 num_blades = 3  # Number of blades
 
+# Define Wind Conditions for performance analysis
 min_wind_speed = 0  # Minimum wind speed for performance analysis
 max_wind_speed = 25  # Maximum wind speed for performance analysis
 wind_speed_discretisation = 100  # Number of points for wind speed discretization
 
+# Define calculation parameters for induction factors
+a_guess = 0.0  # Initial guess for axial induction factor  
+a_prime_guess = 0.0  # Initial guess for tangential induction factor
+
+max_iterations = 100  # Maximum number of iterations for convergence
+tolerance = 1e-5  # Tolerance for convergence
+
+# Define radius for which the aerodynamics parameters are calulated
+radius = 30.0  # Radius of the rotor in meters
+
 # Define the blade data source 
 Data_Source = "IEA-15-240-RWT"  # Data source name
-
 
 # Loading Data ________________________________________________________________
 
@@ -82,8 +92,21 @@ blade.compute_induction_factors_blade(operational_condition=operational_conditio
 print("Running blade element momentum theory...")
 bet = BladeElementTheory(blade=blade)
 result = bet.compute_aerodynamic_performance(operational_condition=operational_condition)
-
+aerodata_at_radius = bet.compute_induction_factors(radius = radius, a_guess=a_guess, a_prime_guess=a_prime_guess, max_iterations=max_iterations, tolerance=tolerance, operational_characteristics=ops, operational_condition=operational_condition)
 # Results _____________________________________________________________
+
+# Print aerodynamic data for the specified radius
+print(f"\nAerodynamic data at radius {radius} m:")
+print(f"Radius: {aerodata_at_radius['radius']:.2f} m")
+print(f"Axial induction factor (a): {aerodata_at_radius['a']:.4f}")
+print(f"Tangential induction factor (a'): {aerodata_at_radius['a_prime']:.4f}")
+print(f"Angle of attack (alpha): {aerodata_at_radius['alpha']:.2f} degrees")
+print(f"Lift coefficient (Cl): {aerodata_at_radius['cl']:.4f}")
+print(f"Drag coefficient (Cd): {aerodata_at_radius['cd']:.4f}")
+print(f"Flow angle (phi): {aerodata_at_radius['phi']:.2f} degrees")
+print(f"Normal force coefficient (Cn): {aerodata_at_radius['Cn']:.4f}")
+print(f"Thrust force coefficient (Ct): {aerodata_at_radius['Ct']:.4f}")
+print("-" * 40)
 
 print(f"Total Thrust: {result[0]} N")
 print(f"Total Torque: {result[1]} Nm")
