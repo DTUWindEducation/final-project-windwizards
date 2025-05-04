@@ -2,6 +2,11 @@
 
 # Standard library imports
 from pathlib import Path
+import sys
+
+# Add project root to Python path to ensure imports work correctly
+project_root = Path(__file__).parent.parent
+sys.path.insert(0, str(project_root))
 
 # Third-party imports
 import matplotlib.pyplot as plt
@@ -16,7 +21,6 @@ from src.OperationalCondition import OperationalCondition
 from src.BladeElementTheory import BladeElementTheory
 from src.PerformanceAnalyzer import PerformanceAnalyzer
 from src import save_results, save_plots
-
 
 # Input _______________________________________________________________________
 
@@ -48,21 +52,18 @@ Data_Source = "IEA-15-240-RWT"  # Data source name
 
 # Loading Data ________________________________________________________________
 
-# Set the Data source base path
-base_path = Path(__file__).parent / "inputs" / Data_Source
+# Set the Data source base path - now using project_root
+base_path = project_root / "inputs" / Data_Source
 
 # Load airfoils into a dictionary
 print("Loading airfoils...")
 airfoil_map = {}
 
 # Iterate through all coordinate files in the Airfoils directory
-for coord_file in (
-        base_path /
-        "Airfoils").glob("IEA-15-240-RWT_AF*_Coords.txt"):
+for coord_file in (base_path / "Airfoils").glob("IEA-15-240-RWT_AF*_Coords.txt"):
     # Extract the index from the filename
     idx = coord_file.stem.split("_")[-2][2:]
-    polar_file = base_path / \
-        f"Airfoils/IEA-15-240-RWT_AeroDyn15_Polar_{idx}.dat"
+    polar_file = base_path / f"Airfoils/IEA-15-240-RWT_AeroDyn15_Polar_{idx}.dat"
 
     # Create Airfoil object and load data from the files
     airfoil = Airfoil(name="", reynolds=0.0, control=0, incl_ua_data=False)
@@ -164,12 +165,8 @@ print(f"Power Coefficient (CP): {result[4]:.2f}")
 
 print("-" * 40)
 
-# Save results and plots
-output_folder = (
-    Path(__file__).parent /
-    "outputs" /
-    f"wind_speed_{
-        operational_condition.wind_speed}ms")
+# Save results and plots - using project_root for output paths
+output_folder = project_root / "outputs" / f"wind_speed_{operational_condition.wind_speed}ms"
 output_file = output_folder / "results.txt"
 
 # Save all results and plots
