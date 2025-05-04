@@ -152,11 +152,16 @@ class Blade:
         
         # Set equal aspect ratio with scale factor for better visibility
         ax.set_box_aspect([scale_factor, self.R, scale_factor])
-        ax.set_title('Blade Shape')
-        ax.set_xlabel('X (Chordwise direction)')
-        ax.set_ylabel('Y (Spanwise direction)')
-        ax.set_zlabel('Z (Thickness direction)')
-        plt.legend(loc='upper right')
+        ax.set_title('Blade Shape', pad=20)
+        ax.set_xlabel('X (Chordwise direction)', labelpad=5)  # Increased label padding
+        ax.set_ylabel('Y (Spanwise direction)', labelpad=45)  # Increased label padding
+        ax.set_zlabel('Z (Thickness direction)', labelpad=15)  # Increased label padding
+        
+        # Adjust legend position and alignment
+        ax.legend(loc='upper left', bbox_to_anchor=(1.05, 1), title="Blade Elements")
+
+        fig.tight_layout()
+        
         plt.tight_layout()
         plt.show()
 
