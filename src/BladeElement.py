@@ -31,7 +31,14 @@ class BladeElement:
         solidity (Optional[float]): Solidity of the blade element.
     """
 
-    def __init__(self, r: float, twist: float, chord: float, airfoil_id: int, airfoil: Optional['Airfoil'] = None):
+    def __init__(
+        self,
+        r: float,
+        twist: float,
+        chord: float,
+        airfoil_id: int,
+        airfoil: Optional["Airfoil"] = None,
+    ):
         """
         Initializes a BladeElement object.
 
@@ -86,7 +93,19 @@ class BladeElement:
         self.solidity = solidity
         return self.solidity
 
-    def compute_element_induction_factors(self, a, a_prime, wind_speed, omega, r, phi, Cn, Ct, tolerance=1e-5, max_iterations=100):
+    def compute_element_induction_factors(
+        self,
+        a,
+        a_prime,
+        wind_speed,
+        omega,
+        r,
+        phi,
+        Cn,
+        Ct,
+        tolerance=1e-5,
+        max_iterations=100,
+    ):
         """
         Computes the induction factors for a single blade element.
 
@@ -109,7 +128,9 @@ class BladeElement:
             phi = np.arctan2((1 - a) * wind_speed, (1 + a_prime) * omega * r)
 
             a_new = 1 / ((4 * np.sin(phi) ** 2) / (self.solidity * Cn) + 1)
-            a_prime_new = 1 / ((4 * np.sin(phi) * np.cos(phi)) / (self.solidity * Ct) - 1)
+            a_prime_new = 1 / (
+                (4 * np.sin(phi) * np.cos(phi)) / (self.solidity * Ct) - 1
+            )
 
             if abs(a - a_new) < tolerance and abs(a_prime - a_prime_new) < tolerance:
                 break
@@ -118,7 +139,15 @@ class BladeElement:
 
         return a, a_prime
 
-    def compute_induction_factors(self, a_guess=0.0, a_prime_guess=0.0, max_iterations=100, tolerance=1e-5, operational_characteristics=None, operational_condition=None):
+    def compute_induction_factors(
+        self,
+        a_guess=0.0,
+        a_prime_guess=0.0,
+        max_iterations=100,
+        tolerance=1e-5,
+        operational_characteristics=None,
+        operational_condition=None,
+    ):
         """
         Computes the induction factors for the blade element.
 
@@ -144,9 +173,18 @@ class BladeElement:
         if self.airfoil and self.airfoil.aero_data:
             twist_rad = np.radians(self.twist)
 
-            wind_speeds = np.array([op.wind_speed for op in operational_characteristics.characteristics])
-            pitches = np.array([np.radians(op.pitch) for op in operational_characteristics.characteristics])
-            pitch_rad = np.interp(operational_condition.wind_speed, wind_speeds, pitches)
+            wind_speeds = np.array(
+                [op.wind_speed for op in operational_characteristics.characteristics]
+            )
+            pitches = np.array(
+                [
+                    np.radians(op.pitch)
+                    for op in operational_characteristics.characteristics
+                ]
+            )
+            pitch_rad = np.interp(
+                operational_condition.wind_speed, wind_speeds, pitches
+            )
 
             alpha = phi - (pitch_rad + twist_rad)
 
@@ -161,7 +199,18 @@ class BladeElement:
             Cn = Cl * np.cos(phi) + Cd * np.sin(phi)
             Ct = Cl * np.sin(phi) - Cd * np.cos(phi)
 
-            a, a_prime = self.compute_element_induction_factors(a, a_prime, wind_speed, omega, r, phi, Cn, Ct, tolerance, max_iterations)
+            a, a_prime = self.compute_element_induction_factors(
+                a,
+                a_prime,
+                wind_speed,
+                omega,
+                r,
+                phi,
+                Cn,
+                Ct,
+                tolerance,
+                max_iterations,
+            )
 
             phi = np.arctan2((1 - a) * wind_speed, (1 + a_prime) * omega * r)
 
@@ -174,7 +223,16 @@ class BladeElement:
             self.Cn = Cn
             self.Ct = Ct
 
-        return self.a, self.a_prime, self.alpha, self.cl, self.cd, self.phi, self.Cn, self.Ct
+        return (
+            self.a,
+            self.a_prime,
+            self.alpha,
+            self.cl,
+            self.cd,
+            self.phi,
+            self.Cn,
+            self.Ct,
+        )
 
     def __repr__(self):
         """
@@ -183,5 +241,7 @@ class BladeElement:
         Returns:
             str: String representation of the BladeElement object.
         """
-        return (f"BladeElement(r={self.r}, twist={self.twist}, chord={self.chord}, "
-                f"airfoil_id={self.airfoil_id}, airfoil={'Assigned' if self.airfoil else 'None'})")
+        return (
+            f"BladeElement(r={self.r}, twist={self.twist}, chord={self.chord}, "
+            f"airfoil_id={self.airfoil_id}, airfoil={'Assigned' if self.airfoil else 'None'})"
+        )

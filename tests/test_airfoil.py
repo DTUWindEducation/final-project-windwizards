@@ -7,6 +7,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.Airfoil import Airfoil, AeroCoefficients, plot_airfoil_shapes
 
+
 @pytest.fixture
 def sample_airfoil():
     """Create a sample Airfoil object for testing."""
@@ -20,8 +21,9 @@ def sample_airfoil():
         aero_data=[
             AeroCoefficients(alpha=0, cl=0.5, cd=0.01, cm=0.02),
             AeroCoefficients(alpha=5, cl=0.7, cd=0.02, cm=0.03),
-        ]
+        ],
     )
+
 
 def test_airfoil_initialization(sample_airfoil):
     """Test initialization of an Airfoil object."""
@@ -33,6 +35,7 @@ def test_airfoil_initialization(sample_airfoil):
     assert len(sample_airfoil.shape_coords) == 3
     assert len(sample_airfoil.aero_data) == 2
 
+
 def test_airfoil_repr(sample_airfoil):
     """Test the __repr__ output of the Airfoil object."""
     repr_str = repr(sample_airfoil)
@@ -41,9 +44,11 @@ def test_airfoil_repr(sample_airfoil):
     assert "num_shape_coords=3" in repr_str
     assert "num_aero_data=2" in repr_str
 
+
 def test_plot_airfoil_shapes(sample_airfoil):
     """Test that plot_airfoil_shapes runs without errors."""
     plot_airfoil_shapes([sample_airfoil], [0])  # Only checking that no exception occurs
+
 
 def test_load_from_file(tmp_path):
     """Test load_from_file with a small dummy file."""
@@ -59,13 +64,14 @@ def test_load_from_file(tmp_path):
         "0.5 0.1\n"
         "1.0 0.0\n"
     )
-    
+
     airfoil = Airfoil(name="", reynolds=0, control=0, incl_ua_data=False)
     airfoil.load_from_file(dummy_file)
-    
+
     assert airfoil.name == "Airfoil 01"
     assert airfoil.ref_coord == (0.25, 0.0)
     assert len(airfoil.shape_coords) == 3
+
 
 def test_load_from_polar_and_coords(tmp_path):
     """Test load_from_polar_and_coords with dummy coordinate and polar files."""
@@ -81,7 +87,7 @@ def test_load_from_polar_and_coords(tmp_path):
         "0.0 0.0\n"
         "1.0 0.0\n"
     )
-    
+
     # Create dummy polar file
     polar_file = tmp_path / "polar.txt"
     polar_file.write_text(
@@ -92,7 +98,7 @@ def test_load_from_polar_and_coords(tmp_path):
         "0 0.5 0.01 0.02\n"
         "5 0.7 0.02 0.03\n"
     )
-    
+
     airfoil = Airfoil(name="", reynolds=0, control=0, incl_ua_data=False)
     airfoil.load_from_polar_and_coords(coord_file, polar_file)
 

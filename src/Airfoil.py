@@ -214,4 +214,3 @@ def plot_airfoil_shapes(airfoils: List[Airfoil], indices: List[int]):
     plt.legend()
     plt.tight_layout()
     plt.show()
-
