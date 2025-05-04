@@ -29,12 +29,16 @@ The implementation is based on the IEA 15-MW reference wind turbine specificatio
 ```bash
 pip install -e .
 ```
+2. Install the required packages (matplotlib, numpy, scipy) in your environment:
+```bash
+pip install matplotlib numpy scipy
+```
 
-2. Add the IEA-15-240-RWT Data in inputs 
+3. Add the IEA-15-240-RWT Data in inputs 
 
-3. Specify in main.py the inputs (wind conditions, etc.)
+4. Specify in main.py the inputs (wind conditions, etc.)
 
-4. Run the example:
+5. Run the example:
 ```bash
 python examples/main.py
 ```
