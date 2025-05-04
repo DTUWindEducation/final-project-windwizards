@@ -31,7 +31,8 @@ class PerformanceAnalyzer:
         self.min_wind_speed = min_wind_speed
         self.max_wind_speed = max_wind_speed
         self.num_points = num_points
-        self.wind_speeds = np.linspace(min_wind_speed, max_wind_speed, num_points)
+        self.wind_speeds = np.linspace(
+            min_wind_speed, max_wind_speed, num_points)
         self._performance_metrics = None  # Initialize as None, calculate on demand
         self._performance_calculated = False
 
@@ -66,8 +67,7 @@ class PerformanceAnalyzer:
 
             # Calculate performance metrics using BladeElementTheory
             thrust, torque, power, ct, cp = BET.compute_aerodynamic_performance(
-                operational_condition=operational_condition
-            )
+                operational_condition=operational_condition)
 
             # Append results directly to the instance variable
             self._performance_metrics["wind_speed"].append(wind_speed)

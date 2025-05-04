@@ -1,17 +1,15 @@
-import sys
-from pathlib import Path
-import pytest
-import numpy as np
-from unittest.mock import patch, MagicMock, mock_open
-from io import StringIO
-
-# Add src directory to Python path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
 from src.OperationalCharacteristics import (
     OperationalCharacteristic,
     OperationalCharacteristics,
 )
+import sys
+from pathlib import Path
+import pytest
+import numpy as np
+from unittest.mock import patch, MagicMock
+
+# Add src directory to Python path
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 
 def test_operational_characteristic_init():
@@ -115,7 +113,8 @@ def test_load_from_file():
     characteristics.load_from_file(mock_path)
 
     # Check that valid lines were parsed correctly
-    # Only 3 valid lines in our test data because the line with "garbage" is invalid
+    # Only 3 valid lines in our test data because the line with "garbage" is
+    # invalid
     assert len(characteristics.characteristics) == 4
 
     # Check first valid entry
@@ -144,7 +143,8 @@ def test_operational_characteristics_repr():
     """Test the string representation of OperationalCharacteristics."""
     # Test with empty characteristics
     characteristics = OperationalCharacteristics()
-    assert repr(characteristics) == "OperationalCharacteristics(num_conditions=0)."
+    assert repr(
+        characteristics) == "OperationalCharacteristics(num_conditions=0)."
 
     # Test with some characteristics
     char1 = OperationalCharacteristic(
@@ -155,7 +155,8 @@ def test_operational_characteristics_repr():
     )
 
     characteristics = OperationalCharacteristics([char1, char2])
-    assert repr(characteristics) == "OperationalCharacteristics(num_conditions=2)."
+    assert repr(
+        characteristics) == "OperationalCharacteristics(num_conditions=2)."
 
 
 @patch("matplotlib.pyplot.figure")
@@ -210,7 +211,8 @@ def test_plot_characteristics(
     # Check that appropriate labels and titles were set
     mock_xlabel.assert_called_once_with("Wind Speed (m/s)")
     mock_ylabel.assert_called_once_with("Operational Characteristics")
-    mock_title.assert_called_once_with("Operational Characteristics vs Wind Speed")
+    mock_title.assert_called_once_with(
+        "Operational Characteristics vs Wind Speed")
     mock_legend.assert_called_once()
     mock_grid.assert_called_once()
     mock_show.assert_called_once()

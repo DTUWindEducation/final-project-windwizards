@@ -89,7 +89,8 @@ class BladeElement:
             return self.solidity
 
         solidity = (num_blades * self.chord) / (2 * np.pi * self.r)
-        solidity = min(solidity, 1)  # Solidity cannot exceed 1 for physical reasons
+        # Solidity cannot exceed 1 for physical reasons
+        solidity = min(solidity, 1)
         self.solidity = solidity
         return self.solidity
 
@@ -128,11 +129,14 @@ class BladeElement:
             phi = np.arctan2((1 - a) * wind_speed, (1 + a_prime) * omega * r)
 
             a_new = 1 / ((4 * np.sin(phi) ** 2) / (self.solidity * Cn) + 1)
-            a_prime_new = 1 / (
-                (4 * np.sin(phi) * np.cos(phi)) / (self.solidity * Ct) - 1
-            )
+            a_prime_new = 1 / ((4 * np.sin(phi) * np.cos(phi)
+                                ) / (self.solidity * Ct) - 1)
 
-            if abs(a - a_new) < tolerance and abs(a_prime - a_prime_new) < tolerance:
+            if abs(
+                a -
+                a_new) < tolerance and abs(
+                a_prime -
+                    a_prime_new) < tolerance:
                 break
 
             a, a_prime = a_new, a_prime_new
@@ -177,14 +181,12 @@ class BladeElement:
                 [op.wind_speed for op in operational_characteristics.characteristics]
             )
             pitches = np.array(
-                [
-                    np.radians(op.pitch)
-                    for op in operational_characteristics.characteristics
-                ]
+                [np.radians(op.pitch) for op in operational_characteristics.characteristics]
             )
             pitch_rad = np.interp(
-                operational_condition.wind_speed, wind_speeds, pitches
-            )
+                operational_condition.wind_speed,
+                wind_speeds,
+                pitches)
 
             alpha = phi - (pitch_rad + twist_rad)
 
@@ -242,6 +244,9 @@ class BladeElement:
             str: String representation of the BladeElement object.
         """
         return (
-            f"BladeElement(r={self.r}, twist={self.twist}, chord={self.chord}, "
-            f"airfoil_id={self.airfoil_id}, airfoil={'Assigned' if self.airfoil else 'None'})"
-        )
+            f"BladeElement(r={
+                self.r}, twist={
+                self.twist}, chord={
+                self.chord}, " f"airfoil_id={
+                    self.airfoil_id}, airfoil={
+                        'Assigned' if self.airfoil else 'None'})")

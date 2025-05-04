@@ -1,13 +1,14 @@
 import numpy as np
 
-from typing import List
-from pathlib import Path
-
 from src.Blade import Blade
 
 
 class OperationalCondition:
-    def __init__(self, wind_speed: float, rho: float = 1.225, num_blades: int = 3):
+    def __init__(
+            self,
+            wind_speed: float,
+            rho: float = 1.225,
+            num_blades: int = 3):
         """
         Initialize the operational condition with wind speed, angular velocity, and air density.
         Wind speed can be a single float.

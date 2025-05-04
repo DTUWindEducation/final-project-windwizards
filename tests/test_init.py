@@ -1,17 +1,14 @@
+from src.PerformanceAnalyzer import PerformanceAnalyzer
+from src.OperationalCondition import OperationalCondition
+from src import save_results, save_plots
 import sys
 from pathlib import Path
-import pytest
 import tempfile
 import os
 from unittest.mock import MagicMock, patch
-import matplotlib.pyplot as plt
 
 # Add src directory to Python path
 sys.path.insert(0, str(Path(__file__).parent.parent))
-
-from src import save_results, save_plots
-from src.OperationalCondition import OperationalCondition
-from src.PerformanceAnalyzer import PerformanceAnalyzer
 
 
 def test_save_results():
@@ -37,7 +34,11 @@ def test_save_results():
         output_file = Path(temp_dir) / "test_results.txt"
 
         # Call the function being tested
-        save_results(operational_condition, results, output_file, "Test-Source")
+        save_results(
+            operational_condition,
+            results,
+            output_file,
+            "Test-Source")
 
         # Check if the file was created
         assert output_file.exists(), "Results file was not created"
@@ -72,7 +73,8 @@ def test_save_plots(mock_close, mock_savefig):
         # Call the function being tested
         save_plots(output_folder, performance_analyzer)
 
-        # Check if the method calls the expected methods on performance_analyzer
+        # Check if the method calls the expected methods on
+        # performance_analyzer
         assert performance_analyzer.plot_power_curve.call_count == 1
         assert performance_analyzer.plot_thrust_curve.call_count == 1
         assert performance_analyzer.plot_torque_curve.call_count == 1

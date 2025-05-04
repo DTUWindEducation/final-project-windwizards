@@ -4,7 +4,6 @@
 from pathlib import Path
 
 # Third-party imports
-import numpy as np
 import matplotlib.pyplot as plt
 
 # Local imports
@@ -12,15 +11,11 @@ from src.Airfoil import Airfoil, plot_airfoil_shapes
 from src.Blade import Blade
 from src.OperationalCharacteristics import (
     OperationalCharacteristics,
-    OperationalCharacteristic,
 )
 from src.OperationalCondition import OperationalCondition
 from src.BladeElementTheory import BladeElementTheory
 from src.PerformanceAnalyzer import PerformanceAnalyzer
 from src import save_results, save_plots
-
-import numpy as np
-import matplotlib.pyplot as plt
 
 
 # Input _______________________________________________________________________
@@ -61,10 +56,13 @@ print("Loading airfoils...")
 airfoil_map = {}
 
 # Iterate through all coordinate files in the Airfoils directory
-for coord_file in (base_path / "Airfoils").glob("IEA-15-240-RWT_AF*_Coords.txt"):
+for coord_file in (
+        base_path /
+        "Airfoils").glob("IEA-15-240-RWT_AF*_Coords.txt"):
     # Extract the index from the filename
     idx = coord_file.stem.split("_")[-2][2:]
-    polar_file = base_path / f"Airfoils/IEA-15-240-RWT_AeroDyn15_Polar_{idx}.dat"
+    polar_file = base_path / \
+        f"Airfoils/IEA-15-240-RWT_AeroDyn15_Polar_{idx}.dat"
 
     # Create Airfoil object and load data from the files
     airfoil = Airfoil(name="", reynolds=0.0, control=0, incl_ua_data=False)
@@ -85,36 +83,46 @@ print(f"Loaded {len(ops.characteristics)} operational characteristics")
 # Load blade data
 print("Loading blade...")
 blade_file = base_path / "IEA-15-240-RWT_AeroDyn15_blade.dat"
-blade = Blade(
-    operational_characteristics=ops
-)  # Initialize blade with operational characteristics
+# Initialize blade with operational characteristics
+blade = Blade(operational_characteristics=ops)
 blade.load_from_file(file_path=blade_file, airfoil_map=airfoil_map)
 print(f"Loaded blade with {len(blade.elements)} elements")
-#print(f"Blade characteristic: {blade.operational_characteristics} m")
+# print(f"Blade characteristic: {blade.operational_characteristics} m")
 # ops.plot_characteristics(V_min=0, V_max=30, num_points=100)
 
-# Processing  Data _____________________________________________________________
+# Processing  Data _______________________________________________________
 
 # Create operational condition object
 operational_condition = OperationalCondition(
-    wind_speed=wind_speed, rho=rho, num_blades=num_blades
-)
+    wind_speed=wind_speed, rho=rho, num_blades=num_blades)
 operational_condition.calculate_angular_velocity(blade=blade)
 print("-" * 40)
 print(operational_condition)
 
 # Calculate induction factors for each blade element
 print("Calculating induction factors for each blade element...")
-blade.compute_induction_factors_blade(operational_condition=operational_condition)
+blade.compute_induction_factors_blade(
+    operational_condition=operational_condition)
 
 # Run blade element momentum theory
 print("Running blade element momentum theory...")
 bet = BladeElementTheory(blade=blade)
-result = bet.compute_aerodynamic_performance(operational_condition=operational_condition)
-aerodata_at_radius = bet.compute_induction_factors(radius = radius, a_guess=a_guess, a_prime_guess=a_prime_guess, max_iterations=max_iterations, tolerance=tolerance, operational_characteristics=ops, operational_condition=operational_condition)
+result = bet.compute_aerodynamic_performance(
+    operational_condition=operational_condition)
+aerodata_at_radius = bet.compute_induction_factors(
+    radius=radius,
+    a_guess=a_guess,
+    a_prime_guess=a_prime_guess,
+    max_iterations=max_iterations,
+    tolerance=tolerance,
+    operational_characteristics=ops,
+    operational_condition=operational_condition,
+)
 
 # Calculate aerodynamic performance for the specified wind speed range
-performance_analyzer = PerformanceAnalyzer(blade=blade, min_wind_speed=1, max_wind_speed=30, num_points=100)
+performance_analyzer = PerformanceAnalyzer(
+    blade=blade, min_wind_speed=1, max_wind_speed=30, num_points=100
+)
 
 
 # Results _____________________________________________________________
@@ -158,10 +166,10 @@ print("-" * 40)
 
 # Save results and plots
 output_folder = (
-    Path(__file__).parent
-    / "outputs"
-    / f"wind_speed_{operational_condition.wind_speed}ms"
-)
+    Path(__file__).parent /
+    "outputs" /
+    f"wind_speed_{
+        operational_condition.wind_speed}ms")
 output_file = output_folder / "results.txt"
 
 # Save all results and plots

@@ -1,8 +1,6 @@
 """Source code for small functions used in the project."""
 
 import matplotlib.pyplot as plt
-from pathlib import Path
-import numpy as np
 
 
 def save_results(operational_condition, results, output_file, input_folder):
@@ -16,7 +14,8 @@ def save_results(operational_condition, results, output_file, input_folder):
     """
     thrust, torque, power, ct, cp = results
 
-    output_file.parent.mkdir(parents=True, exist_ok=True)  # Ensure the directory exists
+    # Ensure the directory exists
+    output_file.parent.mkdir(parents=True, exist_ok=True)
     with open(output_file, "w") as f:
 
         f.write("=== Wind Turbine Simulation Results ===\n")

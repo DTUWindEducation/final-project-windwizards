@@ -1,11 +1,10 @@
+from src.Airfoil import Airfoil, AeroCoefficients, plot_airfoil_shapes
 import sys
 from pathlib import Path
 import pytest
 
 # Add src directory to Python path
 sys.path.insert(0, str(Path(__file__).parent.parent))
-
-from src.Airfoil import Airfoil, AeroCoefficients, plot_airfoil_shapes
 
 
 @pytest.fixture
@@ -47,7 +46,9 @@ def test_airfoil_repr(sample_airfoil):
 
 def test_plot_airfoil_shapes(sample_airfoil):
     """Test that plot_airfoil_shapes runs without errors."""
-    plot_airfoil_shapes([sample_airfoil], [0])  # Only checking that no exception occurs
+    plot_airfoil_shapes(
+        [sample_airfoil],
+        [0])  # Only checking that no exception occurs
 
 
 def test_load_from_file(tmp_path):

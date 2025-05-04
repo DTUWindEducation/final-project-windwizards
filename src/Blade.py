@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Dict, Optional
+from typing import List, Dict
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import cm
@@ -29,7 +29,8 @@ class Blade:
         self.R = None  # Tip radius
         self.operational_characteristics = operational_characteristics
 
-    def load_from_file(self, file_path: Path, airfoil_map: Dict[int, Airfoil] = None):
+    def load_from_file(self, file_path: Path,
+                       airfoil_map: Dict[int, Airfoil] = None):
         """
         Load blade elements from a file.
 
@@ -164,22 +165,22 @@ class Blade:
                 if i < len(self.elements) - 1 and i % 2 == 0:
                     next_element = self.elements[i + 1]
                     if next_element.airfoil and hasattr(
-                        next_element.airfoil, "shape_coords"
-                    ):
-                        # Calculate leading and trailing edge points for current and next element
+                            next_element.airfoil, "shape_coords"):
+                        # Calculate leading and trailing edge points for
+                        # current and next element
                         le_current = [x_rotated[0], y_final[0], z_rotated[0]]
-                        te_current = [x_rotated[-1], y_final[-1], z_rotated[-1]]
+                        te_current = [x_rotated[-1],
+                                      y_final[-1], z_rotated[-1]]
 
-                        next_coords = np.array(next_element.airfoil.shape_coords)
+                        next_coords = np.array(
+                            next_element.airfoil.shape_coords)
                         next_x = next_coords[:, 0] * next_element.chord
                         next_z = next_coords[:, 1] * next_element.chord
                         next_twist_rad = np.radians(next_element.twist)
-                        next_x_rotated = next_x * np.cos(
-                            next_twist_rad
-                        ) - next_z * np.sin(next_twist_rad)
-                        next_z_rotated = next_x * np.sin(
-                            next_twist_rad
-                        ) + next_z * np.cos(next_twist_rad)
+                        next_x_rotated = next_x * \
+                            np.cos(next_twist_rad) - next_z * np.sin(next_twist_rad)
+                        next_z_rotated = next_x * \
+                            np.sin(next_twist_rad) + next_z * np.cos(next_twist_rad)
 
                         le_next = [
                             next_x_rotated[0],
@@ -209,12 +210,23 @@ class Blade:
         # Set equal aspect ratio with scale factor for better visibility
         ax.set_box_aspect([scale_factor, self.R, scale_factor])
         ax.set_title("Blade Shape", pad=20)
-        ax.set_xlabel("X (Chordwise direction)", labelpad=5)  # Increased label padding
-        ax.set_ylabel("Y (Spanwise direction)", labelpad=45)  # Increased label padding
-        ax.set_zlabel("Z (Thickness direction)", labelpad=15)  # Increased label padding
+        ax.set_xlabel(
+            "X (Chordwise direction)",
+            labelpad=5)  # Increased label padding
+        ax.set_ylabel(
+            "Y (Spanwise direction)",
+            labelpad=45)  # Increased label padding
+        ax.set_zlabel(
+            "Z (Thickness direction)",
+            labelpad=15)  # Increased label padding
 
         # Adjust legend position and alignment
-        ax.legend(loc="upper left", bbox_to_anchor=(1.05, 1), title="Blade Elements")
+        ax.legend(
+            loc="upper left",
+            bbox_to_anchor=(
+                1.05,
+                1),
+            title="Blade Elements")
 
         fig.tight_layout()
 
@@ -222,7 +234,10 @@ class Blade:
         plt.show()
 
     def __repr__(self):
-        return f"Blade with {len(self.elements)} elements and operational characteristics: {self.operational_characteristics}"
+        return f"Blade with {
+            len(
+                self.elements)} elements and operational characteristics: {
+            self.operational_characteristics}"
 
     def __str__(self):
         return (

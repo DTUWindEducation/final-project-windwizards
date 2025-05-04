@@ -164,7 +164,8 @@ class Airfoil:
                 continue
 
             if parsing_data:
-                if stripped.lower().startswith("alpha") or stripped.startswith("("):
+                if stripped.lower().startswith(
+                        "alpha") or stripped.startswith("("):
                     continue
 
                 parts = stripped.split()

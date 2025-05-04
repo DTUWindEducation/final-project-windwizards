@@ -1,12 +1,10 @@
 import pytest
 import numpy as np
-import matplotlib.pyplot as plt
 from unittest.mock import MagicMock, patch
 
 from src.PerformanceAnalyzer import PerformanceAnalyzer
 from src.Blade import Blade
 from src.BladeElementTheory import BladeElementTheory
-from src.OperationalCondition import OperationalCondition
 
 
 @pytest.fixture
@@ -74,8 +72,10 @@ def test_initialization(mock_blade):
 @patch("src.PerformanceAnalyzer.OperationalCondition")
 @patch("src.PerformanceAnalyzer.BladeElementTheory")
 def test_calculate_performance(
-    MockBET, MockOperationalCondition, performance_analyzer, mock_blade
-):
+        MockBET,
+        MockOperationalCondition,
+        performance_analyzer,
+        mock_blade):
     """Test that performance calculation works correctly."""
     # Configure the mocks
     mock_op_condition = MagicMock()

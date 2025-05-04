@@ -1,3 +1,11 @@
+from src.OperationalCharacteristics import (
+    OperationalCharacteristics,
+    OperationalCharacteristic,
+)
+from src.OperationalCondition import OperationalCondition
+from src.Airfoil import Airfoil, AeroCoefficients
+from src.BladeElement import BladeElement
+from src.Blade import Blade
 import sys
 from pathlib import Path
 import pytest
@@ -10,15 +18,6 @@ from unittest.mock import MagicMock, patch
 
 # Add src directory to Python path
 sys.path.insert(0, str(Path(__file__).parent.parent))
-
-from src.Blade import Blade
-from src.BladeElement import BladeElement
-from src.Airfoil import Airfoil, AeroCoefficients
-from src.OperationalCondition import OperationalCondition
-from src.OperationalCharacteristics import (
-    OperationalCharacteristics,
-    OperationalCharacteristic,
-)
 
 
 @pytest.fixture
@@ -112,8 +111,8 @@ def sample_blade_with_airfoils(
 
 
 def test_blade_initialization(
-    sample_blade_elements, sample_operational_characteristics
-):
+        sample_blade_elements,
+        sample_operational_characteristics):
     """Test initialization of a Blade object."""
     blade = Blade(
         elements=sample_blade_elements,
@@ -178,9 +177,12 @@ def test_calculate_element_discretization_lengths(sample_blade):
         assert element.dr is not None
 
     # Check specific dr values based on element spacing
-    assert blade.elements[0].dr == (blade.elements[1].r - blade.elements[0].r) / 2
-    assert blade.elements[1].dr == (blade.elements[2].r - blade.elements[0].r) / 2
-    assert blade.elements[2].dr == (blade.elements[2].r - blade.elements[1].r) / 2
+    assert blade.elements[0].dr == (
+        blade.elements[1].r - blade.elements[0].r) / 2
+    assert blade.elements[1].dr == (
+        blade.elements[2].r - blade.elements[0].r) / 2
+    assert blade.elements[2].dr == (
+        blade.elements[2].r - blade.elements[1].r) / 2
 
 
 def test_calculate_element_discretization_lengths_empty_blade():
@@ -191,8 +193,8 @@ def test_calculate_element_discretization_lengths_empty_blade():
 
 
 def test_compute_induction_factors_blade(
-    sample_blade_with_airfoils, sample_operational_condition
-):
+        sample_blade_with_airfoils,
+        sample_operational_condition):
     """Test computation of induction factors for all blade elements."""
     blade = sample_blade_with_airfoils
 
@@ -211,7 +213,8 @@ def test_compute_induction_factors_blade(
     # Check that tip radius (R) is set
     assert blade.R == 6.0  # Max radius from our sample elements
 
-    # Check that induction factors and other properties are computed for each element
+    # Check that induction factors and other properties are computed for each
+    # element
     for element in blade.elements:
         assert element.dr is not None
         assert element.solidity is not None
@@ -290,20 +293,20 @@ def test_plot_blade_shape(sample_blade_with_airfoils):
     blade.R = 6.0  # Set tip radius
 
     # Mock matplotlib methods to avoid display issues
-    with patch(
-        "matplotlib.pyplot.figure", return_value=MagicMock()
-    ) as mock_figure, patch("matplotlib.pyplot.show") as mock_show, patch(
-        "matplotlib.pyplot.subplot", return_value=MagicMock()
-    ) as mock_subplot:
+    with patch("matplotlib.pyplot.figure", return_value=MagicMock()) as mock_figure, patch(
+        "matplotlib.pyplot.show"
+    ) as mock_show, patch("matplotlib.pyplot.subplot", return_value=MagicMock()) as mock_subplot:
 
         # Call the method being tested
         blade.plot_blade_shape(scale_factor=5)
 
-        # Verify the method calls - simply check that these functions were called at least once
+        # Verify the method calls - simply check that these functions were
+        # called at least once
         assert mock_figure.called
         assert mock_show.called
 
-        # We don't verify subplot calls as they're made through add_subplot in the implementation
+        # We don't verify subplot calls as they're made through add_subplot in
+        # the implementation
 
 
 def test_plot_blade_shape_with_no_airfoil(sample_blade):
@@ -312,14 +315,15 @@ def test_plot_blade_shape_with_no_airfoil(sample_blade):
     blade.R = 6.0  # Set tip radius
 
     # Mock matplotlib methods
-    with patch(
-        "matplotlib.pyplot.figure", return_value=MagicMock()
-    ) as mock_figure, patch("matplotlib.pyplot.show") as mock_show:
+    with patch("matplotlib.pyplot.figure", return_value=MagicMock()) as mock_figure, patch(
+        "matplotlib.pyplot.show"
+    ) as mock_show:
 
         # Call the method - this should not plot any airfoils but still work
         blade.plot_blade_shape()
 
-        # Verify basic calls were made - check that functions were called at least once
+        # Verify basic calls were made - check that functions were called at
+        # least once
         assert mock_figure.called
         assert mock_show.called
 
@@ -329,14 +333,15 @@ def test_plot_blade_shape_with_empty_blade():
     blade = Blade()
 
     # Mock matplotlib methods
-    with patch(
-        "matplotlib.pyplot.figure", return_value=MagicMock()
-    ) as mock_figure, patch("matplotlib.pyplot.show") as mock_show:
+    with patch("matplotlib.pyplot.figure", return_value=MagicMock()) as mock_figure, patch(
+        "matplotlib.pyplot.show"
+    ) as mock_show:
 
         # Call the method - should handle empty blade gracefully
         blade.plot_blade_shape()
 
-        # Verify basic calls were made - check that functions were called at least once
+        # Verify basic calls were made - check that functions were called at
+        # least once
         assert mock_figure.called
         assert mock_show.called
 

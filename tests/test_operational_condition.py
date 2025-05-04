@@ -1,3 +1,9 @@
+from src.OperationalCharacteristics import (
+    OperationalCharacteristics,
+    OperationalCharacteristic,
+)
+from src.Blade import Blade  # Needed for testing calculate_angular_velocity
+from src.OperationalCondition import OperationalCondition
 import sys
 from pathlib import Path
 import pytest
@@ -6,13 +12,6 @@ from unittest.mock import MagicMock
 
 # Add src directory to Python path
 sys.path.insert(0, str(Path(__file__).parent.parent))
-
-from src.OperationalCondition import OperationalCondition
-from src.Blade import Blade  # Needed for testing calculate_angular_velocity
-from src.OperationalCharacteristics import (
-    OperationalCharacteristics,
-    OperationalCharacteristic,
-)
 
 
 def test_operational_condition_initialization():
@@ -95,11 +94,13 @@ def test_calculate_angular_velocity():
     )
     mock_blade.operational_characteristics = mock_op_chars
 
-    # Create an OperationalCondition with a wind speed that matches one of the characteristics
+    # Create an OperationalCondition with a wind speed that matches one of the
+    # characteristics
     condition = OperationalCondition(wind_speed=10.0)
     result = condition.calculate_angular_velocity(mock_blade)
 
-    # Check that rpm was calculated correctly (should be 8.0 for wind_speed=10.0)
+    # Check that rpm was calculated correctly (should be 8.0 for
+    # wind_speed=10.0)
     assert condition.rpm == 8.0
     assert result is condition  # Should return self for method chaining
 
@@ -111,8 +112,10 @@ def test_calculate_angular_velocity():
     condition = OperationalCondition(wind_speed=7.5)
     condition.calculate_angular_velocity(mock_blade)
 
-    # For wind_speed=7.5, rpm should be interpolated between 6.0 (at 5.0 m/s) and 8.0 (at 10.0 m/s)
-    expected_rpm = 7.0  # Linear interpolation: 6.0 + (7.5-5.0)/(10.0-5.0) * (8.0-6.0)
+    # For wind_speed=7.5, rpm should be interpolated between 6.0 (at 5.0 m/s)
+    # and 8.0 (at 10.0 m/s)
+    # Linear interpolation: 6.0 + (7.5-5.0)/(10.0-5.0) * (8.0-6.0)
+    expected_rpm = 7.0
     assert condition.rpm == pytest.approx(expected_rpm)
     expected_omega = expected_rpm * 2 * np.pi / 60
     assert condition.omega == pytest.approx(expected_omega)

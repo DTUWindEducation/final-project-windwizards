@@ -14,8 +14,11 @@ class BladeElementTheory:
         self.blade = blade
 
     def calculate_solidity(
-        self, operational_conditions=None, chord=None, r=None, solidity=None
-    ):
+            self,
+            operational_conditions=None,
+            chord=None,
+            r=None,
+            solidity=None):
         """
         Calculates the solidity of the blade element.
 
@@ -32,7 +35,8 @@ class BladeElementTheory:
             return solidity
 
         solidity = (num_blades * chord) / (2 * np.pi * r)
-        solidity = min(solidity, 1)  # Solidity cannot exceed 1 for physical reasons
+        # Solidity cannot exceed 1 for physical reasons
+        solidity = min(solidity, 1)
         return solidity
 
     def compute_element_induction_factors(
@@ -75,9 +79,14 @@ class BladeElementTheory:
             )
 
             a_new = 1 / ((4 * np.sin(phi) ** 2) / (self.solidity * Cn) + 1)
-            a_prime_new = 1 / ((4 * np.sin(phi) * np.cos(phi)) / (solidity * Ct) - 1)
+            a_prime_new = 1 / \
+                ((4 * np.sin(phi) * np.cos(phi)) / (solidity * Ct) - 1)
 
-            if abs(a - a_new) < tolerance and abs(a_prime - a_prime_new) < tolerance:
+            if abs(
+                a -
+                a_new) < tolerance and abs(
+                a_prime -
+                    a_prime_new) < tolerance:
                 break
 
             a, a_prime = a_new, a_prime_new
@@ -144,10 +153,12 @@ class BladeElementTheory:
         wind_speeds = np.array(
             [op.wind_speed for op in operational_characteristics.characteristics]
         )
-        pitches = np.array(
-            [np.radians(op.pitch) for op in operational_characteristics.characteristics]
-        )
-        pitch_rad = np.interp(operational_condition.wind_speed, wind_speeds, pitches)
+        pitches = np.array([np.radians(op.pitch)
+                            for op in operational_characteristics.characteristics])
+        pitch_rad = np.interp(
+            operational_condition.wind_speed,
+            wind_speeds,
+            pitches)
 
         # Iterative solution
         for _ in range(max_iterations):
@@ -177,10 +188,15 @@ class BladeElementTheory:
 
             # Update induction factors
             a_new = 1 / ((4 * np.sin(phi) ** 2) / (solidity * Cn) + 1)
-            a_prime_new = 1 / ((4 * np.sin(phi) * np.cos(phi)) / (solidity * Ct) - 1)
+            a_prime_new = 1 / \
+                ((4 * np.sin(phi) * np.cos(phi)) / (solidity * Ct) - 1)
 
             # Check convergence
-            if abs(a - a_new) < tolerance and abs(a_prime - a_prime_new) < tolerance:
+            if abs(
+                a -
+                a_new) < tolerance and abs(
+                a_prime -
+                    a_prime_new) < tolerance:
                 break
 
             a, a_prime = a_new, a_prime_new
@@ -209,7 +225,8 @@ class BladeElementTheory:
             tuple: (cl, cd) Interpolated lift and drag coefficients
         """
         if element.airfoil and element.airfoil.aero_data:
-            alphas = np.array([data.alpha for data in element.airfoil.aero_data])
+            alphas = np.array(
+                [data.alpha for data in element.airfoil.aero_data])
             cls = np.array([data.cl for data in element.airfoil.aero_data])
             cds = np.array([data.cd for data in element.airfoil.aero_data])
 
@@ -221,8 +238,7 @@ class BladeElementTheory:
         return 0.0, 0.0
 
     def compute_aerodynamic_performance(
-        self, operational_condition: OperationalCondition
-    ):
+            self, operational_condition: OperationalCondition):
         """
         Compute the aerodynamic performance of the blade.
 
@@ -264,9 +280,8 @@ class BladeElementTheory:
             a_prime = element.a_prime
 
             # Calculate relative wind speed
-            V_rel = np.sqrt(
-                ((1 - a) * wind_speed) ** 2 + ((1 + a_prime) * omega * r) ** 2
-            )
+            V_rel = np.sqrt(((1 - a) * wind_speed) ** 2 +
+                            ((1 + a_prime) * omega * r) ** 2)
 
             # Calculate lift and drag forces per unit length
             L = 0.5 * rho * V_rel**2 * chord * Cl
@@ -278,7 +293,8 @@ class BladeElementTheory:
 
             # Compute local contributions to thrust and torque
             dT = 4 * np.pi * r * rho * wind_speed**2 * a * (1 - a) * dr
-            dM = 4 * np.pi * r**3 * rho * wind_speed * omega * a_prime * (1 - a) * dr
+            dM = 4 * np.pi * r**3 * rho * wind_speed * \
+                omega * a_prime * (1 - a) * dr
 
             # Store forces in element
             element.L = L

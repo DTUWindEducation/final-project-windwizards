@@ -24,13 +24,18 @@ class OperationalCharacteristic:
 
     def __repr__(self):
         return (
-            f"OperationalCharacteristic(wind_speed={self.wind_speed}, pitch={self.pitch}, "
-            f"rpm={self.rpm}, aero_power={self.aero_power}, aero_thrust={self.aero_thrust})"
-        )
+            f"OperationalCharacteristic(wind_speed={
+                self.wind_speed}, pitch={
+                self.pitch}, " f"rpm={
+                self.rpm}, aero_power={
+                    self.aero_power}, aero_thrust={
+                        self.aero_thrust})")
 
 
 class OperationalCharacteristics:
-    def __init__(self, characteristics: List[OperationalCharacteristic] = None):
+    def __init__(
+            self,
+            characteristics: List[OperationalCharacteristic] = None):
         self.characteristics = characteristics if characteristics else []
 
     def load_from_file(self, file_path: Path):
@@ -39,7 +44,8 @@ class OperationalCharacteristics:
 
         for line in lines:
             line = line.strip()
-            if not line or any(line.startswith(c) for c in ("-", "=", "!", "#")):
+            if not line or any(line.startswith(c)
+                               for c in ("-", "=", "!", "#")):
                 continue
 
             parts = line.split()
@@ -65,8 +71,10 @@ class OperationalCharacteristics:
                 continue
 
     def plot_characteristics(
-        self, V_min: float = 0, V_max: float = 30, num_points: int = 100
-    ):
+            self,
+            V_min: float = 0,
+            V_max: float = 30,
+            num_points: int = 100):
         """Compute optimal operational strategy, i.e.,  blade pitch angle theta_p
         and rotational speed omega, as function of wind speed V_0, based on
         the provided operational strategy"""
@@ -94,6 +102,6 @@ class OperationalCharacteristics:
         plt.show()
 
     def __repr__(self):
-        return (
-            f"OperationalCharacteristics(num_conditions={len(self.characteristics)})."
-        )
+        return f"OperationalCharacteristics(num_conditions={
+            len(
+                self.characteristics)})."

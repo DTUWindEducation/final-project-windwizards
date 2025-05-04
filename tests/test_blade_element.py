@@ -1,3 +1,10 @@
+from src.OperationalCharacteristics import (
+    OperationalCharacteristics,
+    OperationalCharacteristic,
+)
+from src.Airfoil import Airfoil, AeroCoefficients
+from src.BladeElement import BladeElement
+from src.OperationalCondition import OperationalCondition
 import sys
 from pathlib import Path
 import pytest
@@ -5,14 +12,6 @@ import numpy as np
 
 # Add src directory to Python path
 sys.path.insert(0, str(Path(__file__).parent.parent))
-
-from src.OperationalCondition import OperationalCondition
-from src.BladeElement import BladeElement
-from src.Airfoil import Airfoil, AeroCoefficients
-from src.OperationalCharacteristics import (
-    OperationalCharacteristics,
-    OperationalCharacteristic,
-)
 
 
 @pytest.fixture
@@ -110,8 +109,8 @@ def test_blade_element_initialization(sample_blade_element):
 
 
 def test_blade_element_calculate_solidity(
-    sample_blade_element, sample_operational_conditions
-):
+        sample_blade_element,
+        sample_operational_conditions):
     """Test calculation of solidity."""
     # Set the radius to a non-zero value to avoid division by zero
     sample_blade_element.r = 5.0
@@ -136,8 +135,7 @@ def test_compute_element_induction_factors(sample_blade_element):
 
     # Call the method to compute induction factors
     a_result, a_prime_result = sample_blade_element.compute_element_induction_factors(
-        a, a_prime, wind_speed, omega, r, phi, Cn, Ct
-    )
+        a, a_prime, wind_speed, omega, r, phi, Cn, Ct)
 
     # Assert that the computed values are reasonable
     assert a_result is not None
@@ -163,13 +161,11 @@ def test_compute_induction_factors(
     a_prime_guess = 0.05
 
     # Run the method being tested
-    a, a_prime, alpha, cl, cd, phi, Cn, Ct = (
-        sample_blade_element.compute_induction_factors(
-            a_guess=a_guess,
-            a_prime_guess=a_prime_guess,
-            operational_characteristics=sample_operational_characteristics,
-            operational_condition=sample_operational_conditions,
-        )
+    a, a_prime, alpha, cl, cd, phi, Cn, Ct = sample_blade_element.compute_induction_factors(
+        a_guess=a_guess,
+        a_prime_guess=a_prime_guess,
+        operational_characteristics=sample_operational_characteristics,
+        operational_condition=sample_operational_conditions,
     )
 
     # Check that values were computed and stored in the blade element
@@ -193,17 +189,18 @@ def test_compute_induction_factors(
     assert Ct == sample_blade_element.Ct
 
     # Check that reasonable values were computed
-    assert -0.5 <= a <= 0.5, f"Axial induction factor a={a} outside expected range"
+    assert - \
+        0.5 <= a <= 0.5, f"Axial induction factor a={a} outside expected range"
     assert (
         -0.5 <= a_prime <= 0.5
     ), f"Tangential induction factor a_prime={a_prime} outside expected range"
-    assert (
-        -np.pi / 2 <= alpha <= np.pi / 2
-    ), f"Angle of attack alpha={alpha} outside expected range"
+    assert -np.pi / 2 <= alpha <= np.pi / \
+        2, f"Angle of attack alpha={alpha} outside expected range"
     assert 0 <= cl <= 2.0, f"Lift coefficient cl={cl} outside expected range"
     assert 0 <= cd <= 0.1, f"Drag coefficient cd={cd} outside expected range"
-    assert 0 <= phi <= np.pi / 2, f"Flow angle phi={phi} outside expected range"
-    assert -2.0 <= Cn <= 2.0, f"Normal force coefficient Cn={Cn} outside expected range"
-    assert (
-        -2.0 <= Ct <= 2.0
-    ), f"Tangential force coefficient Ct={Ct} outside expected range"
+    assert 0 <= phi <= np.pi / \
+        2, f"Flow angle phi={phi} outside expected range"
+    assert - \
+        2.0 <= Cn <= 2.0, f"Normal force coefficient Cn={Cn} outside expected range"
+    assert - \
+        2.0 <= Ct <= 2.0, f"Tangential force coefficient Ct={Ct} outside expected range"
