@@ -164,7 +164,8 @@ class Airfoil:
                 continue
 
             if parsing_data:
-                if stripped.lower().startswith("alpha") or stripped.startswith("("):
+                if stripped.lower().startswith(
+                        "alpha") or stripped.startswith("("):
                     continue
 
                 parts = stripped.split()
@@ -214,4 +215,3 @@ def plot_airfoil_shapes(airfoils: List[Airfoil], indices: List[int]):
     plt.legend()
     plt.tight_layout()
     plt.show()
-

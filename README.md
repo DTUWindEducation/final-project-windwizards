@@ -1,5 +1,11 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/zjSXGKeR)
 
+
+# Enhanced readability of the ReadMe with VS-Code
+
+Press: ctrl + shift + v - Windnows
+       cmd + shift + v  - Mac
+
 # Wind Turbine BEM Modeling Package
 
 Team: WindyWizards
@@ -24,7 +30,11 @@ The implementation is based on the IEA 15-MW reference wind turbine specificatio
 pip install -e .
 ```
 
-2. Run the example:
+2. Add the IEA-15-240-RWT Data in inputs 
+
+3. Specify in main.py the inputs (wind conditions, etc.)
+
+4. Run the example:
 ```bash
 python examples/main.py
 ```
@@ -35,6 +45,37 @@ This will:
 - Calculate performance metrics
 - Generate visualization plots
 
+## Requirements 
+
+This package requires Python 3.8 or newer and the following dependencies:
+
+Core dependencies:
+```bash
+numpy>=1.20    # For numerical computations
+scipy>=1.7     # For scientific computations
+matplotlib>=3.4 # For plotting and visualization
+```
+
+Development dependencies:
+```bash
+pytest>=6.0     # For running tests
+pytest-cov>=2.0 # For test coverage reporting
+```
+
+To install all dependencies, run:
+```bash
+# Install core dependencies
+pip install numpy scipy matplotlib
+
+# Install development dependencies (optional)
+pip install pytest pytest-cov
+```
+
+Or simply install everything using pip and the pyproject.toml:
+```bash
+pip install -e ".[test]"
+```
+
 ## Architecture
 
 Below is the architecture diagram for the package: 
@@ -43,14 +84,18 @@ Below is the architecture diagram for the package:
    ```
    [BEM_solver]
    ├── inputs/
-   │   ├── IEA-15-240-RWT/
-   │   │   ├── airfoil_data/
-   │   │   ├── blade_geometry/
-   │   │   └── operational_conditions/
-   │   └── Your_Data/
+   │   └── IEA-15-240-RWT/
+   │       ├── Airfoils/
+   │       │   ├──IEA-15-240-RWT_AeroDyn15_Polar_XX.dat
+   │       │   └──IEA-15-240-RWT_AFXX_Coords.txt
+   │       ├── IEA_15MW_RWT_Onshore.opt
+   │       └── IEA-15-240-RWT_AeroDyn15_blade.dat
    ├── outputs/
-   │   ├── performance_results/
-   │   └── visualization_plots/
+   │   └── wind_speed_XX.Xms/
+   │       ├── results.txt
+   │       ├── power_curve.png
+   │       ├── thrust_curve.png
+   │       └── torque_curve.png
    ├── src/
    │   ├── Airfoil.py
    │   ├── BladeElement.py
@@ -61,14 +106,18 @@ Below is the architecture diagram for the package:
    ├── tests/
    │   ├── test_airfoil.py
    │   ├── test_blade.py
+   │   ├── test_blade_element.py
+   │   ├── test_blade_element_theory.py
+   │   ├── test_init.py
+   │   ├── test_operational_characteristics.py
    │   ├── test_operational_condition.py
-   │   └── other_test_scripts/
+   │   ├── test_performance_analyzer.py
+   │   └── __init__.py
    ├── examples/
    │   ├── main.py
    │   └── additional_examples/
    ├── .gitignore
    ├── LICENSE
-   ├── Collaboration.md
    ├── README.md
    ├── pyproject.toml
    └── other_optional_files/

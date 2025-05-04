@@ -5,8 +5,17 @@ from src.Blade import Blade
 from src.BladeElementTheory import BladeElementTheory
 from src.OperationalCondition import OperationalCondition
 
+
 class PerformanceAnalyzer:
-    def __init__(self, blade: Blade, min_wind_speed: float = 0.0, max_wind_speed: float = 25.0, num_points: int = 100, num_blades: int = 3, rho: float = 1.225):
+    def __init__(
+        self,
+        blade: Blade,
+        min_wind_speed: float = 0.0,
+        max_wind_speed: float = 25.0,
+        num_points: int = 100,
+        num_blades: int = 3,
+        rho: float = 1.225,
+    ):
         """
         Initialize PerformanceAnalyzer with a blade object.
 
@@ -22,7 +31,8 @@ class PerformanceAnalyzer:
         self.min_wind_speed = min_wind_speed
         self.max_wind_speed = max_wind_speed
         self.num_points = num_points
-        self.wind_speeds = np.linspace(min_wind_speed, max_wind_speed, num_points)
+        self.wind_speeds = np.linspace(
+            min_wind_speed, max_wind_speed, num_points)
         self._performance_metrics = None  # Initialize as None, calculate on demand
         self._performance_calculated = False
 
@@ -45,16 +55,19 @@ class PerformanceAnalyzer:
             "thrust": [],
             "torque": [],
             "ct": [],
-            "cp": []
+            "cp": [],
         }
 
         for wind_speed in self.wind_speeds:
-            operational_condition = OperationalCondition(wind_speed=wind_speed, rho=self.rho, num_blades=self.num_blades)
+            operational_condition = OperationalCondition(
+                wind_speed=wind_speed, rho=self.rho, num_blades=self.num_blades
+            )
             operational_condition.calculate_angular_velocity(blade=self.blade)
             BET = BladeElementTheory(blade=self.blade)
 
             # Calculate performance metrics using BladeElementTheory
-            thrust , torque, power, ct, cp= BET.compute_aerodynamic_performance(operational_condition=operational_condition)
+            thrust, torque, power, ct, cp = BET.compute_aerodynamic_performance(
+                operational_condition=operational_condition)
 
             # Append results directly to the instance variable
             self._performance_metrics["wind_speed"].append(wind_speed)
@@ -64,8 +77,7 @@ class PerformanceAnalyzer:
             self._performance_metrics["ct"].append(ct)
             self._performance_metrics["cp"].append(cp)
 
-
-        self._performance_calculated = True # Mark as calculated
+        self._performance_calculated = True  # Mark as calculated
         return self._performance_metrics
 
     @property
@@ -80,10 +92,14 @@ class PerformanceAnalyzer:
         """
         Plot the power curve of the wind turbine.
         """
-        self._ensure_performance_calculated() # Ensure data is calculated
+        self._ensure_performance_calculated()  # Ensure data is calculated
 
         plt.figure(figsize=(10, 6))
-        plt.plot(self._performance_metrics["wind_speed"], self._performance_metrics["power"], label="Power Curve")
+        plt.plot(
+            self._performance_metrics["wind_speed"],
+            self._performance_metrics["power"],
+            label="Power Curve",
+        )
         plt.xlabel("Wind Speed (m/s)")
         plt.ylabel("Power (W)")
         plt.title("Wind Turbine Power Curve")
@@ -95,25 +111,35 @@ class PerformanceAnalyzer:
         """
         Plot the thrust curve of the wind turbine.
         """
-        self._ensure_performance_calculated() # Ensure data is calculated
+        self._ensure_performance_calculated()  # Ensure data is calculated
 
         plt.figure(figsize=(10, 6))
-        plt.plot(self._performance_metrics["wind_speed"], self._performance_metrics["thrust"], label="Thrust Curve", color='orange')
+        plt.plot(
+            self._performance_metrics["wind_speed"],
+            self._performance_metrics["thrust"],
+            label="Thrust Curve",
+            color="orange",
+        )
         plt.xlabel("Wind Speed (m/s)")
         plt.ylabel("Thrust (N)")
         plt.title("Wind Turbine Thrust Curve")
         plt.grid()
         plt.legend()
         # plt.show()
-    
+
     def plot_torque_curve(self):
         """
         Plot the torque curve of the wind turbine.
         """
-        self._ensure_performance_calculated() # Ensure data is calculated
+        self._ensure_performance_calculated()  # Ensure data is calculated
 
         plt.figure(figsize=(10, 6))
-        plt.plot(self._performance_metrics["wind_speed"], self._performance_metrics["torque"], label="Torque Curve", color='green')
+        plt.plot(
+            self._performance_metrics["wind_speed"],
+            self._performance_metrics["torque"],
+            label="Torque Curve",
+            color="green",
+        )
         plt.xlabel("Wind Speed (m/s)")
         plt.ylabel("Torque (Nm)")
         plt.title("Wind Turbine Torque Curve")

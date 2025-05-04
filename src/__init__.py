@@ -1,22 +1,22 @@
-""" Source code for small functions used in the project. """
+"""Source code for small functions used in the project."""
 
 import matplotlib.pyplot as plt
-from pathlib import Path
-import numpy as np
+
 
 def save_results(operational_condition, results, output_file, input_folder):
     """
     Save simulation results to a text file.
-    
+
     Parameters:
         operational_condition (OperationalCondition): The operational condition object
         results (tuple): Tuple containing (thrust, torque, power, ct, cp)
         output_file (Path): Path to save the results
     """
     thrust, torque, power, ct, cp = results
-    
-    output_file.parent.mkdir(parents=True, exist_ok=True)  # Ensure the directory exists
-    with open(output_file, 'w') as f:
+
+    # Ensure the directory exists
+    output_file.parent.mkdir(parents=True, exist_ok=True)
+    with open(output_file, "w") as f:
 
         f.write("=== Wind Turbine Simulation Results ===\n")
         f.write(f"\nData Source: {input_folder}\n")
@@ -31,10 +31,11 @@ def save_results(operational_condition, results, output_file, input_folder):
         f.write(f"Thrust Coefficient (CT): {ct:.4f}\n")
         f.write(f"Power Coefficient (CP): {cp:.4f}\n")
 
+
 def save_plots(output_folder, performance_analyzer):
     """
     Save all plots to the output folder.
-    
+
     Parameters:
         output_folder (Path): Directory to save the plots
         blade (Blade): Blade object
