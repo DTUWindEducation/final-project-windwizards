@@ -30,7 +30,11 @@ The implementation is based on the IEA 15-MW reference wind turbine specificatio
 pip install -e .
 ```
 
-2. Run the example:
+2. Add the IEA-15-240-RWT Data in inputs 
+
+3. Specify in main.py the inputs (wind conditions, etc.)
+
+4. Run the example:
 ```bash
 python examples/main.py
 ```
@@ -80,14 +84,18 @@ Below is the architecture diagram for the package:
    ```
    [BEM_solver]
    ├── inputs/
-   │   ├── IEA-15-240-RWT/
-   │   │   ├── airfoil_data/
-   │   │   ├── blade_geometry/
-   │   │   └── operational_conditions/
-   │   └── Your_Data/
+   │   └── IEA-15-240-RWT/
+   │       ├── Airfoils/
+   │       │   ├──IEA-15-240-RWT_AeroDyn15_Polar_XX.dat
+   │       │   └──IEA-15-240-RWT_AFXX_Coords.txt
+   │       ├── IEA_15MW_RWT_Onshore.opt
+   │       └── IEA-15-240-RWT_AeroDyn15_blade.dat
    ├── outputs/
-   │   ├── performance_results/
-   │   └── visualization_plots/
+   │   └── wind_speed_XX.Xms/
+   │       ├── results.txt
+   │       ├── power_curve.png
+   │       ├── thrust_curve.png
+   │       └── torque_curve.png
    ├── src/
    │   ├── Airfoil.py
    │   ├── BladeElement.py
@@ -98,14 +106,18 @@ Below is the architecture diagram for the package:
    ├── tests/
    │   ├── test_airfoil.py
    │   ├── test_blade.py
+   │   ├── test_blade_element.py
+   │   ├── test_blade_element_theory.py
+   │   ├── test_init.py
+   │   ├── test_operational_characteristics.py
    │   ├── test_operational_condition.py
-   │   └── other_test_scripts/
+   │   ├── test_performance_analyzer.py
+   │   └── __init__.py
    ├── examples/
    │   ├── main.py
    │   └── additional_examples/
    ├── .gitignore
    ├── LICENSE
-   ├── Collaboration.md
    ├── README.md
    ├── pyproject.toml
    └── other_optional_files/

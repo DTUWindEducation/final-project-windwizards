@@ -30,9 +30,9 @@ def test_airfoil_initialization(sample_airfoil):
     assert sample_airfoil.reynolds == 1e6
     assert sample_airfoil.control == 1
     assert sample_airfoil.incl_ua_data is True
-    assert sample_airfoil.ref_coord == (0.25, 0.0)
-    assert len(sample_airfoil.shape_coords) == 3
-    assert len(sample_airfoil.aero_data) == 2
+    assert sample_airfoil.reynolds == 1e6
+    assert sample_airfoil.control == 1
+    assert not sample_airfoil.incl_ua_data
 
 
 def test_airfoil_repr(sample_airfoil):

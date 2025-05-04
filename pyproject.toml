@@ -1,51 +1,40 @@
-# [build-system]
-# requires = ["setuptools>=45", "wheel"]
-# build-backend = "setuptools.build_meta"
+# Configuration for building and packaging the BEM solver
+# For more details see: https://packaging.python.org/en/latest/guides/writing-pyproject-toml/
 
-# [project]
-# name = "BEM_solver"
-# version = "0.1.0"
-# description = "A BEM-based wind turbine modeling package"
-# readme = "README.md"
-# requires-python = ">=3.8"
-# dependencies = [
-#     "numpy>=1.20",
-#     "scipy>=1.7",
-#     "matplotlib>=3.4",
-# ]
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
-# [project.optional-dependencies]
-# test = [
-#     "pytest>=6.0",
-#     "pytest-cov>=2.0",
-# ]
+[project]
+name = "wind-turbine-bem"
+version = "0.0.1"
+description = "A Blade Element Momentum (BEM) model for wind turbine aerodynamic performance analysis"
+readme = "README.md"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Lara Schmidt, Leif Stolte, Francois de Weck", email = "s250243@dtu.dk" }
+]
+keywords = ["wind", "turbine", "aerodynamics", "BEM", "blade-element-momentum"]
 
-# [tool.pytest.ini_options]
-# addopts = "--cov=src"
-# testpaths = ["tests"]
+dependencies = [
+    "matplotlib>=3.4",
+    "numpy>=1.20",
+    "scipy>=1.7",
+]
 
-# # An extremely simple pyproject.toml
-# # Many more options here: https://packaging.python.org/en/latest/guides/writing-pyproject-toml/
+[project.optional-dependencies]
+test = [
+    "pytest>=6.0",
+    "pytest-cov>=2.0",
+]
 
-# # How to build your package. "[S]trongly recommended" to include this,
-# # per the docs. We use hatchling, default on Python docs.
-# [build-system]
-# requires = ["hatchling"]
-# build-backend = "hatchling.build"
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-v --cov=src"
 
-# # Information on the package
-# [project]
-# name = "codecamp"
-# description = "Simulates the blade and tower deflection of the virtual reference turbine at DTU"
-# version = "0.0.1"
-# authors = [
-#     { name = "Lara Schmidt, Leif Stolte, Francois de Weck", email = "s250243@dtu.dk" }
-# ]
-# dependencies = [
-#     "matplotlib",
-#     "numpy", 
-#     "scipy"
-# ]
+[project.urls]
+Repository = "https://github.com/DTUWindEducation/final-project-windwizards"
+Documentation = "https://github.com/DTUWindEducation/final-project-windwizards/blob/main/README.md"
 
-# [project.urls]
-# Repository = "https://github.com/DTUWindEducation/codecamp-windywizards.git"
+
