@@ -1,25 +1,51 @@
-[build-system]
-requires = ["setuptools>=45", "wheel"]
-build-backend = "setuptools.build_meta"
+# [build-system]
+# requires = ["setuptools>=45", "wheel"]
+# build-backend = "setuptools.build_meta"
 
-[project]
-name = "BEM_solver"
-version = "0.1.0"
-description = "A BEM-based wind turbine modeling package"
-readme = "README.md"
-requires-python = ">=3.8"
-dependencies = [
-    "numpy>=1.20",
-    "scipy>=1.7",
-    "matplotlib>=3.4",
-]
+# [project]
+# name = "BEM_solver"
+# version = "0.1.0"
+# description = "A BEM-based wind turbine modeling package"
+# readme = "README.md"
+# requires-python = ">=3.8"
+# dependencies = [
+#     "numpy>=1.20",
+#     "scipy>=1.7",
+#     "matplotlib>=3.4",
+# ]
 
-[project.optional-dependencies]
-test = [
-    "pytest>=6.0",
-    "pytest-cov>=2.0",
-]
+# [project.optional-dependencies]
+# test = [
+#     "pytest>=6.0",
+#     "pytest-cov>=2.0",
+# ]
 
-[tool.pytest.ini_options]
-addopts = "--cov=src"
-testpaths = ["tests"]
+# [tool.pytest.ini_options]
+# addopts = "--cov=src"
+# testpaths = ["tests"]
+
+# # An extremely simple pyproject.toml
+# # Many more options here: https://packaging.python.org/en/latest/guides/writing-pyproject-toml/
+
+# # How to build your package. "[S]trongly recommended" to include this,
+# # per the docs. We use hatchling, default on Python docs.
+# [build-system]
+# requires = ["hatchling"]
+# build-backend = "hatchling.build"
+
+# # Information on the package
+# [project]
+# name = "codecamp"
+# description = "Simulates the blade and tower deflection of the virtual reference turbine at DTU"
+# version = "0.0.1"
+# authors = [
+#     { name = "Lara Schmidt, Leif Stolte, Francois de Weck", email = "s250243@dtu.dk" }
+# ]
+# dependencies = [
+#     "matplotlib",
+#     "numpy", 
+#     "scipy"
+# ]
+
+# [project.urls]
+# Repository = "https://github.com/DTUWindEducation/codecamp-windywizards.git"

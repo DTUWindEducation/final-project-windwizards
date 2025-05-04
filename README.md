@@ -1,5 +1,11 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/zjSXGKeR)
 
+
+# Enhanced readability of the ReadMe with VS-Code
+
+Press: ctrl + shift + v - Windnows
+       cmd + shift + v  - Mac
+
 # Wind Turbine BEM Modeling Package
 
 Team: WindyWizards
@@ -34,6 +40,37 @@ This will:
 - Process airfoil data
 - Calculate performance metrics
 - Generate visualization plots
+
+## Requirements 
+
+This package requires Python 3.8 or newer and the following dependencies:
+
+Core dependencies:
+```bash
+numpy>=1.20    # For numerical computations
+scipy>=1.7     # For scientific computations
+matplotlib>=3.4 # For plotting and visualization
+```
+
+Development dependencies:
+```bash
+pytest>=6.0     # For running tests
+pytest-cov>=2.0 # For test coverage reporting
+```
+
+To install all dependencies, run:
+```bash
+# Install core dependencies
+pip install numpy scipy matplotlib
+
+# Install development dependencies (optional)
+pip install pytest pytest-cov
+```
+
+Or simply install everything using pip and the pyproject.toml:
+```bash
+pip install -e ".[test]"
+```
 
 ## Architecture
 
